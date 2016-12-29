@@ -8,8 +8,6 @@
 
 import UIKit
 
-let numberOfTiles = 16
-
 // This extension was written with the assumption that the image is SQUARE (i.e.: Aspect ration 1:1)
 extension UIImage {
   
@@ -18,7 +16,7 @@ extension UIImage {
     
     var y: Double = 0
     let edgeLength: Double = Double(size.width) // Equals size.height according to our assumption
-    let edgeUnitLength = Double(size.width) / sqrt(Double(numberOfTiles)) // Edge length of one tile
+    let edgeUnitLength = Double(size.width) / Double(Configs.numberOfTilesOnEdge) // Edge length of one tile
     
     while y < edgeLength {
       var x: Double = 0

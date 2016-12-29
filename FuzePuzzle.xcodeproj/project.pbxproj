@@ -16,6 +16,7 @@
 		1E2C5FAD1E12DF0E00613E9B /* FuzePuzzleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2C5FAC1E12DF0E00613E9B /* FuzePuzzleUITests.swift */; };
 		1E2C5FBE1E136D9500613E9B /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2C5FBD1E136D9500613E9B /* UIImageExtension.swift */; };
 		1E2C5FC21E13B7C200613E9B /* TileCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2C5FC11E13B7C200613E9B /* TileCollectionViewCell.swift */; };
+		1E2C5FC91E14E2CB00613E9B /* Configs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2C5FC81E14E2CB00613E9B /* Configs.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,7 @@
 		1E2C5FAE1E12DF0E00613E9B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1E2C5FBD1E136D9500613E9B /* UIImageExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
 		1E2C5FC11E13B7C200613E9B /* TileCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TileCollectionViewCell.swift; sourceTree = "<group>"; };
+		1E2C5FC81E14E2CB00613E9B /* Configs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configs.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,14 +103,11 @@
 		1E2C5F8B1E12DF0E00613E9B /* FuzePuzzle */ = {
 			isa = PBXGroup;
 			children = (
-				1E2C5FBC1E136D7F00613E9B /* Extensions */,
 				1E2C5F8C1E12DF0E00613E9B /* AppDelegate.swift */,
-				1E2C5F8E1E12DF0E00613E9B /* PuzzleViewController.swift */,
-				1E2C5F901E12DF0E00613E9B /* Main.storyboard */,
-				1E2C5FC11E13B7C200613E9B /* TileCollectionViewCell.swift */,
-				1E2C5F931E12DF0E00613E9B /* Assets.xcassets */,
-				1E2C5F951E12DF0E00613E9B /* LaunchScreen.storyboard */,
-				1E2C5F981E12DF0E00613E9B /* Info.plist */,
+				1E2C5FC41E14E1D800613E9B /* Model */,
+				1E2C5FC31E14E1D100613E9B /* View */,
+				1E2C5FC51E14E1DE00613E9B /* Controller */,
+				1E2C5FC61E14E1F200613E9B /* Supporting Files */,
 			);
 			path = FuzePuzzle;
 			sourceTree = "<group>";
@@ -137,6 +136,50 @@
 				1E2C5FBD1E136D9500613E9B /* UIImageExtension.swift */,
 			);
 			name = Extensions;
+			sourceTree = "<group>";
+		};
+		1E2C5FC31E14E1D100613E9B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				1E2C5F951E12DF0E00613E9B /* LaunchScreen.storyboard */,
+				1E2C5F901E12DF0E00613E9B /* Main.storyboard */,
+				1E2C5F931E12DF0E00613E9B /* Assets.xcassets */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		1E2C5FC41E14E1D800613E9B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		1E2C5FC51E14E1DE00613E9B /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				1E2C5F8E1E12DF0E00613E9B /* PuzzleViewController.swift */,
+				1E2C5FC71E14E29D00613E9B /* Cells */,
+				1E2C5FBC1E136D7F00613E9B /* Extensions */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		1E2C5FC61E14E1F200613E9B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1E2C5FC81E14E2CB00613E9B /* Configs.swift */,
+				1E2C5F981E12DF0E00613E9B /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1E2C5FC71E14E29D00613E9B /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				1E2C5FC11E13B7C200613E9B /* TileCollectionViewCell.swift */,
+			);
+			name = Cells;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -276,6 +319,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1E2C5FC91E14E2CB00613E9B /* Configs.swift in Sources */,
 				1E2C5FC21E13B7C200613E9B /* TileCollectionViewCell.swift in Sources */,
 				1E2C5F8F1E12DF0E00613E9B /* PuzzleViewController.swift in Sources */,
 				1E2C5F8D1E12DF0E00613E9B /* AppDelegate.swift in Sources */,

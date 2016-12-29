@@ -9,7 +9,7 @@
 import UIKit
 
 private let reuseIdentifier = "TileCollectionViewCell"
-private let itemsPerRow:CGFloat = sqrt(CGFloat(Double(numberOfTiles)))
+private let itemsPerRow:CGFloat = sqrt(CGFloat(Double(Configs.numberOfTiles)))
 private let sectionInsets = UIEdgeInsets(top: 25.0, left: 10.0, bottom: 25.0, right: 10.0)
 
 class PuzzleViewController: UICollectionViewController {
@@ -21,13 +21,39 @@ class PuzzleViewController: UICollectionViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    missingTile = Int(arc4random_uniform(15))
-    
-    if let image = UIImage(named: "image") {
-      
-      splitImages = image.splitImages
-      
+    guard let image = UIImage(named: "image") else {
+      return
     }
+    
+    missingTile = Int(arc4random_uniform(UInt32(Configs.numberOfTiles) - 1))
+    splitImages = image.splitImages
+    
+    shuffleTiles()
+  }
+  
+  // Fisher-Yates algorithm: https://en.wikipedia.org/wiki/Fisher–Yates_shuffle
+  func shuffleTiles() {
+    let tileCount = Configs.numberOfTilesOnEdge
+    var i = Configs.numberOfTiles - 1
+    while (i > 0) {
+      let j = Int(floor(Double(arc4random_uniform(UInt32(i)))))
+      let xi = i % tileCount
+      let yi = Int(floor(Double(i / tileCount)))
+      let xj = j % tileCount
+      let yj = Int(floor(Double(j / tileCount)))
+      swapTiles(i: xi, j: yi, k: xj, l: yj)
+      i -= 1
+    }
+  }
+  
+  func swapTiles(i: Int, j: Int, k: Int, l: Int) {
+    // We are using a flat array to represent the grid represented by the game, so use n = y * w + x to translate a grid item position to an array item position
+    let arrayPositionToSwap1 = j * Configs.numberOfTilesOnEdge + i
+    let arrayPositionToSwap2 = l * Configs.numberOfTilesOnEdge + k
+    
+    let temp = splitImages[arrayPositionToSwap1]
+    splitImages[arrayPositionToSwap1] = splitImages[arrayPositionToSwap2]
+    splitImages[arrayPositionToSwap2] = temp
   }
 
   override func didReceiveMemoryWarning() {
