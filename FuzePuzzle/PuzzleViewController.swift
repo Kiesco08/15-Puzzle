@@ -11,11 +11,12 @@ import UIKit
 private let reuseIdentifier = "TileCollectionViewCell"
 private let itemsPerRow:CGFloat = sqrt(CGFloat(Double(Configs.numberOfTiles)))
 private let sectionInsets = UIEdgeInsets(top: 25.0, left: 10.0, bottom: 25.0, right: 10.0)
+private let tileCount = Configs.numberOfTilesOnEdge
 
 class PuzzleViewController: UICollectionViewController {
 
   // Variables
-  var splitImages: [UIImage?] = []
+  var splitImages: [Tile] = []
   var missingTile = 0
   
   override func viewDidLoad() {
@@ -29,11 +30,11 @@ class PuzzleViewController: UICollectionViewController {
     splitImages = image.splitImages
     
     shuffleTiles()
+    makeSurePuzzleIsSolvable()
   }
   
   // Fisher-Yates algorithm: https://en.wikipedia.org/wiki/Fisher–Yates_shuffle
   func shuffleTiles() {
-    let tileCount = Configs.numberOfTilesOnEdge
     var i = Configs.numberOfTiles - 1
     while (i > 0) {
       let j = Int(floor(Double(arc4random_uniform(UInt32(i)))))
@@ -47,13 +48,69 @@ class PuzzleViewController: UICollectionViewController {
   }
   
   func swapTiles(i: Int, j: Int, k: Int, l: Int) {
-    // We are using a flat array to represent the grid represented by the game, so use n = y * w + x to translate a grid item position to an array item position
+    // We are using a flat array to represent the grid represented by the puzzle, so we use n = y * w + x to translate a grid item position to an array item position
     let arrayPositionToSwap1 = j * Configs.numberOfTilesOnEdge + i
     let arrayPositionToSwap2 = l * Configs.numberOfTilesOnEdge + k
     
     let temp = splitImages[arrayPositionToSwap1]
     splitImages[arrayPositionToSwap1] = splitImages[arrayPositionToSwap2]
     splitImages[arrayPositionToSwap2] = temp
+  }
+  
+  func makeSurePuzzleIsSolvable() {
+    let emptyRow = Int(missingTile / Configs.numberOfTilesOnEdge)
+    let emptyColum = missingTile % Configs.numberOfTilesOnEdge
+    
+    if (!isSolvable(emptyRow: emptyRow + 1)) {
+      if (emptyColum == 0 && emptyRow <= 1) {
+        swapTiles(i: tileCount - 2, j: tileCount - 1, k: tileCount - 1, l: tileCount - 1)
+      } else {
+        swapTiles(i: 0, j: 0, k: 1, l: 0)
+      }
+      initEmpty()
+    }
+  }
+  
+  func initEmpty() {
+    missingTile = Configs.numberOfTiles - 1
+    collectionView?.reloadData()
+  }
+  
+  func isSolvable(emptyRow: Int) -> Bool {
+    if (Configs.numberOfTilesOnEdge % 2 == 1) {
+      return (sumInversions() % 2 == 0)
+    } else {
+      return ((sumInversions() + Configs.numberOfTilesOnEdge - emptyRow) % 2 == 0)
+    }
+  }
+  
+  func sumInversions() -> Int {
+    var inversions = 0
+    for j in 0 ..< tileCount {
+      for i in 0 ..< tileCount {
+      inversions += countInversions(i: i, j: j)
+      }
+    }
+    return inversions
+  }
+  
+  func countInversions(i: Int, j: Int) -> Int {
+    var inversions = 0
+    // We are using a flat array to represent the grid represented by the puzzle, so we use n = y * w + x to translate a grid item position to an array item position
+    let tileNum = j * tileCount + i
+    let lastTile = tileCount * tileCount
+    let tileValue = splitImages[tileNum].originalY * tileCount + splitImages[tileNum].originalX
+    for q in tileNum + 1 ..< lastTile {
+      let k = Int(q % tileCount)
+      let l = Int(floor(Double(q / tileCount)))
+      
+      let tileToCompareNum = l * tileCount + k
+      let compValue = splitImages[tileToCompareNum].originalY * tileCount + splitImages[tileToCompareNum].originalX
+      if (tileValue > compValue && tileValue != (lastTile - 1)) {
+        inversions += 1
+      }
+    }
+    return inversions
   }
 
   override func didReceiveMemoryWarning() {
@@ -83,7 +140,7 @@ class PuzzleViewController: UICollectionViewController {
         cell.tileImageView.image = nil
         cell.tileImageView.backgroundColor = UIColor.white
       } else {
-        cell.tileImageView.image = splitImages[indexPath.row]
+        cell.tileImageView.image = splitImages[indexPath.row].image
       }
       
     }
