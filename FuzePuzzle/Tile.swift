@@ -5,6 +5,9 @@
 //  Created by Zoumite Franck Armel Mamboue on 12/29/16.
 //  Copyright © 2016 Zoumite Franck Armel Mamboue. All rights reserved.
 //
+//  This model object holds Tile information:
+//  - The original coordinates X and Y,
+//  - The tile image (optional because it might be an empty tile)
 
 import UIKit
 

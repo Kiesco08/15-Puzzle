@@ -5,6 +5,7 @@
 //  Created by Zoumite Franck Armel Mamboue on 12/27/16.
 //  Copyright © 2016 Zoumite Franck Armel Mamboue. All rights reserved.
 //
+//  This view controller contains the logic of the puzzle.
 
 import UIKit
 
@@ -15,10 +16,11 @@ private let tileCount = Configs.numberOfTilesOnEdge
 
 class PuzzleViewController: UICollectionViewController {
 
-  // Variables
+  // MARK: Instance Variables
   var splitImages: [Tile] = []
   var missingTile = 0
   
+  // MARK: Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -34,31 +36,7 @@ class PuzzleViewController: UICollectionViewController {
     prepareGestureRecognizers()
   }
   
-  func prepareGestureRecognizers() {
-    let tapRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleGesture))
-    tapRecognizer.minimumPressDuration = 0.1
-    collectionView?.addGestureRecognizer(tapRecognizer)
-  }
-  
-  func handleGesture(gesture: UILongPressGestureRecognizer) {
-    guard let collectionView = collectionView else {
-      return
-    }
-    
-    switch(gesture.state) {
-    case UIGestureRecognizerState.began:
-      guard let selectedIndexPath = collectionView.indexPathForItem(at: gesture.location(in: collectionView)) else {
-        break
-      }
-      collectionView.beginInteractiveMovementForItem(at: selectedIndexPath)
-    case UIGestureRecognizerState.changed:
-      collectionView.updateInteractiveMovementTargetPosition(gesture.location(in: gesture.view!))
-    case UIGestureRecognizerState.ended:
-      collectionView.endInteractiveMovement()
-    default:
-      collectionView.cancelInteractiveMovement()
-    }
-  }
+  // MARK: Tile Suffling
   
   // Fisher-Yates algorithm: https://en.wikipedia.org/wiki/Fisher–Yates_shuffle
   func shuffleTiles() {
@@ -98,11 +76,6 @@ class PuzzleViewController: UICollectionViewController {
     }
   }
   
-  func initEmpty() {
-    missingTile = Configs.numberOfTiles - 1
-    collectionView?.reloadData()
-  }
-  
   func isSolvable(emptyRow: Int) -> Bool {
     if (Configs.numberOfTilesOnEdge % 2 == 1) {
       return (sumInversions() % 2 == 0)
@@ -139,59 +112,89 @@ class PuzzleViewController: UICollectionViewController {
     }
     return inversions
   }
-
-  override func didReceiveMemoryWarning() {
-    super.didReceiveMemoryWarning()
-    // Dispose of any resources that can be recreated.
+  
+  func initEmpty() {
+    missingTile = Configs.numberOfTiles - 1
+    collectionView?.reloadData()
   }
+  
+  // MARK: Gesture Recognizers
+  
+  func prepareGestureRecognizers() {
+    let tapRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleGesture))
+    tapRecognizer.minimumPressDuration = 0.1
+    collectionView?.addGestureRecognizer(tapRecognizer)
+  }
+  
+  func handleGesture(gesture: UILongPressGestureRecognizer) {
+    guard let collectionView = collectionView else {
+      return
+    }
+    
+    switch(gesture.state) {
+    case UIGestureRecognizerState.began:
+      guard let selectedIndexPath = collectionView.indexPathForItem(at: gesture.location(in: collectionView)) else {
+        break
+      }
+      collectionView.beginInteractiveMovementForItem(at: selectedIndexPath)
+    case UIGestureRecognizerState.changed:
+      collectionView.updateInteractiveMovementTargetPosition(gesture.location(in: gesture.view!))
+    case UIGestureRecognizerState.ended:
+      collectionView.endInteractiveMovement()
+    default:
+      collectionView.cancelInteractiveMovement()
+    }
+  }
+}
 
-  // MARK: UICollectionViewDataSource
+// MARK: UICollectionViewDataSource
+
+extension PuzzleViewController {
   
   override func numberOfSections(in collectionView: UICollectionView) -> Int {
-    // #warning Incomplete implementation, return the number of sections
     return 1
   }
   
-  
   override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-    // #warning Incomplete implementation, return the number of items
     return splitImages.count
   }
   
   override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
-      
+    
     if let cell = cell as? TileCollectionViewCell {
-      // Configure the cell
       if indexPath.row == missingTile {
         cell.tileImageView.image = nil
         cell.tileImageView.backgroundColor = UIColor.white
       } else {
         cell.tileImageView.image = splitImages[indexPath.row].image
       }
-      
     }
     
     cell.backgroundColor = UIColor.black
     
     return cell
   }
-  
-  // MARK: UICollectionViewDelegate
-  
-  override func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-      let temp = splitImages[sourceIndexPath.row]
-      splitImages[sourceIndexPath.row] = splitImages[destinationIndexPath.row]
-      splitImages[destinationIndexPath.row] = temp
-  }
 }
 
+// MARK: UICollectionViewDelegate
+
+extension PuzzleViewController {
+  
+  override func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+    let temp = splitImages[sourceIndexPath.row]
+    splitImages[sourceIndexPath.row] = splitImages[destinationIndexPath.row]
+    splitImages[destinationIndexPath.row] = temp
+  }
+
+}
+
+// MARK: Configure spacing between tiles
+
 extension PuzzleViewController : UICollectionViewDelegateFlowLayout {
-  //1
-  func collectionView(_ collectionView: UICollectionView,
-                      layout collectionViewLayout: UICollectionViewLayout,
-                      sizeForItemAt indexPath: IndexPath) -> CGSize {
-    //2
+  
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    
     let paddingSpace = sectionInsets.left * (itemsPerRow + 1)
     let availableWidth = view.frame.width - paddingSpace
     let widthPerItem = availableWidth / itemsPerRow
@@ -199,17 +202,11 @@ extension PuzzleViewController : UICollectionViewDelegateFlowLayout {
     return CGSize(width: widthPerItem, height: widthPerItem)
   }
   
-  //3
-  func collectionView(_ collectionView: UICollectionView,
-                      layout collectionViewLayout: UICollectionViewLayout,
-                      insetForSectionAt section: Int) -> UIEdgeInsets {
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
     return sectionInsets
   }
   
-  // 4
-  func collectionView(_ collectionView: UICollectionView,
-                      layout collectionViewLayout: UICollectionViewLayout,
-                      minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
     return sectionInsets.left
   }
 }

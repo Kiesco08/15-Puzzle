@@ -5,6 +5,7 @@
 //  Created by Zoumite Franck Armel Mamboue on 12/27/16.
 //  Copyright © 2016 Zoumite Franck Armel Mamboue. All rights reserved.
 //
+//  This UIImage extension allows to turn any UIImage into an array of Tiles.
 
 import UIKit
 
