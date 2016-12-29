@@ -31,6 +31,33 @@ class PuzzleViewController: UICollectionViewController {
     
     shuffleTiles()
     makeSurePuzzleIsSolvable()
+    prepareGestureRecognizers()
+  }
+  
+  func prepareGestureRecognizers() {
+    let tapRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleGesture))
+    tapRecognizer.minimumPressDuration = 0.1
+    collectionView?.addGestureRecognizer(tapRecognizer)
+  }
+  
+  func handleGesture(gesture: UILongPressGestureRecognizer) {
+    guard let collectionView = collectionView else {
+      return
+    }
+    
+    switch(gesture.state) {
+    case UIGestureRecognizerState.began:
+      guard let selectedIndexPath = collectionView.indexPathForItem(at: gesture.location(in: collectionView)) else {
+        break
+      }
+      collectionView.beginInteractiveMovementForItem(at: selectedIndexPath)
+    case UIGestureRecognizerState.changed:
+      collectionView.updateInteractiveMovementTargetPosition(gesture.location(in: gesture.view!))
+    case UIGestureRecognizerState.ended:
+      collectionView.endInteractiveMovement()
+    default:
+      collectionView.cancelInteractiveMovement()
+    }
   }
   
   // Fisher-Yates algorithm: https://en.wikipedia.org/wiki/Fisher–Yates_shuffle
@@ -152,35 +179,11 @@ class PuzzleViewController: UICollectionViewController {
   
   // MARK: UICollectionViewDelegate
   
-  /*
-   // Uncomment this method to specify if the specified item should be highlighted during tracking
-   override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-   return true
-   }
-   */
-  
-  /*
-   // Uncomment this method to specify if the specified item should be selected
-   override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-   return true
-   }
-   */
-  
-  /*
-   // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-   override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
-   return false
-   }
-   
-   override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-   return false
-   }
-   
-   override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
-   
-   }
-   */
-
+  override func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+      let temp = splitImages[sourceIndexPath.row]
+      splitImages[sourceIndexPath.row] = splitImages[destinationIndexPath.row]
+      splitImages[destinationIndexPath.row] = temp
+  }
 }
 
 extension PuzzleViewController : UICollectionViewDelegateFlowLayout {
