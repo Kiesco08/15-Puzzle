@@ -56,7 +56,102 @@ class PuzzleViewController: UICollectionViewController {
     makeSurePuzzleIsSolvable()
   }
   
-  // MARK: Tile Suffling
+  // MARK: Gesture Recognizers
+  
+  func prepareGestureRecognizers() {
+    let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
+    collectionView?.addGestureRecognizer(tapRecognizer)
+  }
+  
+  func handleTapGesture(gesture: UITapGestureRecognizer) {
+    
+    guard let collectionView = collectionView else {
+      return
+    }
+    
+    switch(gesture.state) {
+    case UIGestureRecognizerState.ended:
+      guard let selectedIndexPath = collectionView.indexPathForItem(at: gesture.location(in: collectionView)) else {
+        break
+      }
+      tileTapped = selectedIndexPath
+      collectionView.beginInteractiveMovementForItem(at: selectedIndexPath)
+      
+      collectionView.endInteractiveMovement()
+
+      if let neighbourMissingTileIndex = neighbourMissingTile() {
+        guard let tileTapped = tileTapped else {
+          return
+        }
+        slideTile(collectionView, tileTapped: tileTapped, missingTile: neighbourMissingTileIndex)
+        
+      } else if let indexesToPush = isInMissingCellRow(gesture.location(in: collectionView)) {
+        for index in indexesToPush.0.reversed() {
+          let tileTapped = index
+          if indexesToPush.1 {
+            let missingTile = IndexPath(row: index.row - 1, section: 0)
+            slideTile(collectionView, tileTapped: tileTapped, missingTile: missingTile)
+          } else {
+            let missingTile = IndexPath(row: index.row + 1, section: 0)
+            slideTile(collectionView, tileTapped: tileTapped, missingTile: missingTile)
+          }
+        }
+
+      } else if let indexesToPush = isInMissingCellColumn(gesture.location(in: collectionView)) {
+        for index in indexesToPush.0.reversed() {
+          let tileTapped = index
+          if indexesToPush.1 {
+            let missingTile = IndexPath(row: index.row - tileCount, section: 0)
+            slideTile(collectionView, tileTapped: tileTapped, missingTile: missingTile)
+          } else {
+            let missingTile = IndexPath(row: index.row + tileCount, section: 0)
+            slideTile(collectionView, tileTapped: tileTapped, missingTile: missingTile)
+          }
+        }
+      }
+    default:
+      collectionView.cancelInteractiveMovement()
+    }
+  }
+  
+  func handleLongPressGesture(gesture: UILongPressGestureRecognizer) {
+    guard let collectionView = collectionView else {
+      return
+    }
+    
+    switch(gesture.state) {
+    case UIGestureRecognizerState.began:
+      guard let selectedIndexPath = collectionView.indexPathForItem(at: gesture.location(in: collectionView)) else {
+        break
+      }
+      tileTapped = selectedIndexPath
+      collectionView.beginInteractiveMovementForItem(at: selectedIndexPath)
+    case UIGestureRecognizerState.changed: break
+    //      collectionView.updateInteractiveMovementTargetPosition(gesture.location(in: gesture.view!))
+    case UIGestureRecognizerState.ended:
+      collectionView.endInteractiveMovement()
+      if let neighbourMissingTileIndex = neighbourMissingTile() {
+        guard let tileTapped = tileTapped else {
+          return
+        }
+        self.missingTile = tileTapped.row
+        collectionView.performBatchUpdates({
+          collectionView.moveItem(at: tileTapped, to: neighbourMissingTileIndex)
+          collectionView.moveItem(at: neighbourMissingTileIndex, to: tileTapped)
+        }, completion: {(finished) in
+          collectionView.dataSource?.collectionView!(collectionView, moveItemAt: tileTapped, to: neighbourMissingTileIndex)
+          self.checkIfWon()
+        })
+      }
+    default:
+      collectionView.cancelInteractiveMovement()
+    }
+  }
+}
+
+// MARK: Game Logic
+
+extension PuzzleViewController {
   
   // Fisher-Yates algorithm: https://en.wikipedia.org/wiki/Fisher–Yates_shuffle
   func shuffleTiles() {
@@ -102,7 +197,7 @@ class PuzzleViewController: UICollectionViewController {
     var inversions = 0
     for j in 0 ..< tileCount {
       for i in 0 ..< tileCount {
-      inversions += countInversions(i: i, j: j)
+        inversions += countInversions(i: i, j: j)
       }
     }
     return inversions
@@ -127,112 +222,6 @@ class PuzzleViewController: UICollectionViewController {
     return inversions
   }
   
-  // MARK: Gesture Recognizers
-  
-  func prepareGestureRecognizers() {
-    let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
-    collectionView?.addGestureRecognizer(tapRecognizer)
-  }
-  
-  func handleTapGesture(gesture: UITapGestureRecognizer) {
-    
-    guard let collectionView = collectionView else {
-      return
-    }
-    
-    switch(gesture.state) {
-    case UIGestureRecognizerState.ended:
-      guard let selectedIndexPath = collectionView.indexPathForItem(at: gesture.location(in: collectionView)) else {
-        break
-      }
-      tileTapped = selectedIndexPath
-      collectionView.beginInteractiveMovementForItem(at: selectedIndexPath)
-      
-      collectionView.endInteractiveMovement()
-      print("Tap")
-
-      if let neighbourMissingTileIndex = neighbourMissingTile() {
-        guard let tileTapped = tileTapped else {
-          return
-        }
-        slideTile(collectionView, tileTapped: tileTapped, missingTile: neighbourMissingTileIndex)
-      } else if let indexesToPush = isInMissingCellRow(gesture.location(in: collectionView)) {
-        print("<<<<<<<<<<<<I'm in the missing cell's ROW >>>>>>>>")
-        print(indexesToPush)
-        
-        for index in indexesToPush.0.reversed() {
-          let tileTapped = index
-          if indexesToPush.1 {
-            let missingTile = IndexPath(row: index.row - 1, section: 0)
-            slideTile(collectionView, tileTapped: tileTapped, missingTile: missingTile)
-          } else {
-            let missingTile = IndexPath(row: index.row + 1, section: 0)
-            slideTile(collectionView, tileTapped: tileTapped, missingTile: missingTile)
-          }
-        }
-
-      } else if let indexesToPush = isInMissingCellColumn(gesture.location(in: collectionView)) {
-        print("<<<<<<<<<<<<I'm in the missing cell's COL >>>>>>>>")
-        print(indexesToPush)
-        
-        for index in indexesToPush.0.reversed() {
-          let tileTapped = index
-          if indexesToPush.1 {
-            let missingTile = IndexPath(row: index.row - tileCount, section: 0)
-            slideTile(collectionView, tileTapped: tileTapped, missingTile: missingTile)
-          } else {
-            let missingTile = IndexPath(row: index.row + tileCount, section: 0)
-            slideTile(collectionView, tileTapped: tileTapped, missingTile: missingTile)
-          }
-        }
-        
-      }
-    default:
-      collectionView.cancelInteractiveMovement()
-    }
-  }
-  
-  func handleLongPressGesture(gesture: UILongPressGestureRecognizer) {
-    guard let collectionView = collectionView else {
-      return
-    }
-    
-    switch(gesture.state) {
-    case UIGestureRecognizerState.began:
-      guard let selectedIndexPath = collectionView.indexPathForItem(at: gesture.location(in: collectionView)) else {
-        break
-      }
-      tileTapped = selectedIndexPath
-      collectionView.beginInteractiveMovementForItem(at: selectedIndexPath)
-    case UIGestureRecognizerState.changed: break
-    //      collectionView.updateInteractiveMovementTargetPosition(gesture.location(in: gesture.view!))
-    case UIGestureRecognizerState.ended:
-      collectionView.endInteractiveMovement()
-      if let neighbourMissingTileIndex = neighbourMissingTile() {
-        guard let tileTapped = tileTapped else {
-          return
-        }
-        self.missingTile = tileTapped.row
-        collectionView.performBatchUpdates({
-          collectionView.moveItem(at: tileTapped, to: neighbourMissingTileIndex)
-          collectionView.moveItem(at: neighbourMissingTileIndex, to: tileTapped)
-        }, completion: {(finished) in
-          collectionView.dataSource?.collectionView!(collectionView, moveItemAt: tileTapped, to: neighbourMissingTileIndex)
-          self.checkIfWon()
-        })
-      } else {
-        print("I don't see missing tile!")
-      }
-    default:
-      collectionView.cancelInteractiveMovement()
-    }
-  }
-}
-
-// MARK: Game Logic
-
-extension PuzzleViewController {
-  
   func slideTile(_ collectionView: UICollectionView, tileTapped: IndexPath, missingTile: IndexPath) {
     self.missingTile = tileTapped.row
     
@@ -251,8 +240,6 @@ extension PuzzleViewController {
       for j in 0 ..< tileCount {
         let n = j * tileCount + i
         if splitImages[n].originalX != i || splitImages[n].originalY != j {
-          print("original x is \(splitImages[n].originalX) and i is \(i) \(splitImages[n].originalX != i)")
-          print("original y is \(splitImages[n].originalY) and j is \(j) \(splitImages[n].originalY != j)")
           solved = false
           break
         }
@@ -266,8 +253,6 @@ extension PuzzleViewController {
       }
       alert.addAction(actionButton)
       self.present(alert, animated: true, completion: nil)
-    } else {
-      print("There are \(self.sumInversions()) inversions")
     }
   }
   
