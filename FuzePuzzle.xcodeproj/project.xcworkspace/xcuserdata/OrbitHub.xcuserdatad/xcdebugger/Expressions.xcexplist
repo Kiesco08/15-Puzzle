@@ -3,26 +3,10 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "PuzzleViewController.makeSurePuzzleIsSolvable() -&gt; ():PuzzleViewController.swift">
+         contextName = "PuzzleViewController.(handleTapGesture(gesture : UITapGestureRecognizer) -&gt; ()).(closure #5):PuzzleViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "sumInversions()">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "PuzzleViewController.handleGesture(gesture : UITapGestureRecognizer) -&gt; ():PuzzleViewController.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "gesture.state">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "PuzzleViewController.isSolvable(emptyRow : Int) -&gt; Bool:PuzzleViewController.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "sumInversions()">
+               value = "index.row + Configs.numberOfTilesOnEdge">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -43,7 +27,10 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "PuzzleViewController.swapTiles(i : Int, j : Int, k : Int, l : Int) -&gt; ():PuzzleViewController.swift">
+         contextName = "PuzzleViewController.viewDidLoad() -&gt; ():PuzzleViewController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "PuzzleViewController.isSolvable(emptyRow : Int) -&gt; Bool:PuzzleViewController.swift">
          <PersistentStrings>
             <PersistentString
                value = "sumInversions()">
@@ -51,13 +38,32 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "PuzzleViewController.viewDidLoad() -&gt; ():PuzzleViewController.swift">
-      </ContextState>
-      <ContextState
          contextName = "PuzzleViewController.collectionView(UICollectionView, layout : UICollectionViewLayout, sizeForItemAt : IndexPath) -&gt; CGSize:PuzzleViewController.swift">
          <PersistentStrings>
             <PersistentString
                value = "itemsPerRow">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "PuzzleViewController.neighbourMissingTile() -&gt; IndexPath?:PuzzleViewController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "PuzzleViewController.swapTiles(i : Int, j : Int, k : Int, l : Int, printIt : Bool) -&gt; ():PuzzleViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "sumInversions()">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "PuzzleViewController.isInMissingCellRow(CGPoint) -&gt; [IndexPath]?:PuzzleViewController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "PuzzleViewController.swapTiles(i : Int, j : Int, k : Int, l : Int) -&gt; ():PuzzleViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "sumInversions()">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -73,10 +79,23 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "PuzzleViewController.neighbourMissingTile() -&gt; IndexPath?:PuzzleViewController.swift">
+         contextName = "PuzzleViewController.handleGesture(gesture : UITapGestureRecognizer) -&gt; ():PuzzleViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "gesture.state">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "PuzzleViewController.swapTiles(i : Int, j : Int, k : Int, l : Int, printIt : Bool) -&gt; ():PuzzleViewController.swift">
+         contextName = "PuzzleViewController.handleTapGesture(gesture : UITapGestureRecognizer) -&gt; ():PuzzleViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "neighbourMissingTile()">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "PuzzleViewController.makeSurePuzzleIsSolvable() -&gt; ():PuzzleViewController.swift">
          <PersistentStrings>
             <PersistentString
                value = "sumInversions()">

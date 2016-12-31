@@ -10,13 +10,45 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FuzePuzzle/PuzzleViewController.swift"
-            timestampString = "504860097.689366"
+            timestampString = "504863988.243036"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "142"
-            endingLineNumber = "142"
+            startingLineNumber = "213"
+            endingLineNumber = "213"
             landmarkName = "handleTapGesture(gesture:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "FuzePuzzle.PuzzleViewController.handleTapGesture (gesture : __ObjC.UITapGestureRecognizer) -&gt; ()"
+                  moduleName = "FuzePuzzle"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/OrbitHub/Dropbox/Career/FuzePuzzle/FuzePuzzle/PuzzleViewController.swift"
+                  timestampString = "504864135.41265"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "228"
+                  endingLineNumber = "228"
+                  offsetFromSymbolStart = "4571">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "FuzePuzzle.PuzzleViewController.handleTapGesture (gesture : __ObjC.UITapGestureRecognizer) -&gt; ()"
+                  moduleName = "FuzePuzzle"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/OrbitHub/Dropbox/Career/FuzePuzzle/FuzePuzzle/PuzzleViewController.swift"
+                  timestampString = "504864135.415526"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "228"
+                  endingLineNumber = "228"
+                  offsetFromSymbolStart = "4575">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -26,45 +58,45 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FuzePuzzle/PuzzleViewController.swift"
-            timestampString = "504860097.689366"
+            timestampString = "504863989.236714"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "49"
-            endingLineNumber = "49"
-            landmarkName = "PuzzleViewController"
-            landmarkType = "3">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "FuzePuzzle/PuzzleViewController.swift"
-            timestampString = "504860097.689366"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "84"
-            endingLineNumber = "84"
-            landmarkName = "makeSurePuzzleIsSolvable()"
+            startingLineNumber = "215"
+            endingLineNumber = "215"
+            landmarkName = "handleTapGesture(gesture:)"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "FuzePuzzle/PuzzleViewController.swift"
-            timestampString = "504860097.689366"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "82"
-            endingLineNumber = "82"
-            landmarkName = "makeSurePuzzleIsSolvable()"
-            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "FuzePuzzle.PuzzleViewController.handleTapGesture (gesture : __ObjC.UITapGestureRecognizer) -&gt; ()"
+                  moduleName = "FuzePuzzle"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/OrbitHub/Dropbox/Career/FuzePuzzle/FuzePuzzle/PuzzleViewController.swift"
+                  timestampString = "504864135.424698"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "228"
+                  endingLineNumber = "228"
+                  offsetFromSymbolStart = "4559">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "FuzePuzzle.PuzzleViewController.handleTapGesture (gesture : __ObjC.UITapGestureRecognizer) -&gt; ()"
+                  moduleName = "FuzePuzzle"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/OrbitHub/Dropbox/Career/FuzePuzzle/FuzePuzzle/PuzzleViewController.swift"
+                  timestampString = "504864135.429486"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "228"
+                  endingLineNumber = "228"
+                  offsetFromSymbolStart = "4575">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

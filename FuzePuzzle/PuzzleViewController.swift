@@ -20,6 +20,17 @@ class PuzzleViewController: UICollectionViewController {
   var splitImages: [Tile] = []
   var missingTile = 0
   var tileTapped: IndexPath?
+  var missingCell : TileCollectionViewCell? {
+    guard let cells = collectionView?.visibleCells as? [TileCollectionViewCell] else {
+      return nil
+    }
+    for cell in cells {
+      if cell.tileImageView.image == nil {
+        return cell
+      }
+    }
+    return nil
+  }
   
   // MARK: Lifecycle
   override func viewDidLoad() {
@@ -42,7 +53,7 @@ class PuzzleViewController: UICollectionViewController {
     
     makeSurePuzzleIsSolvable()
     
-    if (!isSolvable(emptyRow: Int(missingTile / Configs.numberOfTilesOnEdge) + 1)) {
+    if (!isSolvable(emptyY: Int(missingTile / Configs.numberOfTilesOnEdge) + 1)) {
       initPuzzle()
     }
   }
@@ -74,11 +85,11 @@ class PuzzleViewController: UICollectionViewController {
   }
   
   func makeSurePuzzleIsSolvable() {
-    let emptyRow = Int(missingTile / Configs.numberOfTilesOnEdge)
-    let emptyColumn = missingTile % Configs.numberOfTilesOnEdge
+    let emptyY = Int(missingTile / Configs.numberOfTilesOnEdge)
+    let emptyX = missingTile % Configs.numberOfTilesOnEdge
     
-    if (!isSolvable(emptyRow: emptyRow + 1)) {
-      if (emptyRow == 0 && emptyColumn <= 1) {
+    if (!isSolvable(emptyY: emptyY + 1)) {
+      if (emptyY == 0 && emptyX <= 1) {
         swapTiles(i: tileCount - 2, j: tileCount - 1, k: tileCount - 1, l: tileCount - 1)
       } else {
         swapTiles(i: 0, j: 0, k: 1, l: 0)
@@ -86,11 +97,11 @@ class PuzzleViewController: UICollectionViewController {
     }
   }
   
-  func isSolvable(emptyRow: Int) -> Bool {
+  func isSolvable(emptyY: Int) -> Bool {
     if (Configs.numberOfTilesOnEdge % 2 == 1) {
       return (sumInversions() % 2 == 0)
     } else {
-      return ((sumInversions() + Configs.numberOfTilesOnEdge - emptyRow) % 2 == 0)
+      return ((sumInversions() + Configs.numberOfTilesOnEdge - emptyY) % 2 == 0)
     }
   }
   
@@ -146,11 +157,13 @@ class PuzzleViewController: UICollectionViewController {
       
       collectionView.endInteractiveMovement()
       print("Tap")
+
       if let neighbourMissingTileIndex = neighbourMissingTile() {
         guard let tileTapped = tileTapped else {
           return
         }
         self.missingTile = tileTapped.row
+        
         collectionView.performBatchUpdates({
           collectionView.moveItem(at: tileTapped, to: neighbourMissingTileIndex)
           collectionView.moveItem(at: neighbourMissingTileIndex, to: tileTapped)
@@ -158,7 +171,60 @@ class PuzzleViewController: UICollectionViewController {
           collectionView.dataSource?.collectionView!(collectionView, moveItemAt: tileTapped, to: neighbourMissingTileIndex)
           self.checkIfWon()
         })
-      } else {
+      } else if let indexesToPush = isInMissingCellRow(gesture.location(in: collectionView)) {
+        print("<<<<<<<<<<<<I'm in the missing cell's ROW >>>>>>>>")
+        print(indexesToPush)
+        
+        guard let tileTapped = tileTapped else {
+          return
+        }
+        self.missingTile = tileTapped.row
+        
+        collectionView.performBatchUpdates({
+          for index in indexesToPush.0 {
+            if indexesToPush.1 {
+              collectionView.moveItem(at: index, to: IndexPath(row: index.row - 1, section: 0))
+            } else {
+              collectionView.moveItem(at: index, to: IndexPath(row: index.row + 1, section: 0))
+            }
+          }
+        }, completion: {(finished) in
+          for index in indexesToPush.0 {
+            if indexesToPush.1 {
+              collectionView.dataSource?.collectionView!(collectionView, moveItemAt: index, to: IndexPath(row: index.row - 1, section: 0))
+            } else {
+              collectionView.dataSource?.collectionView!(collectionView, moveItemAt: index, to: IndexPath(row: index.row + 1, section: 0))
+            }
+          }
+          self.checkIfWon()
+        })
+      } else if let indexesToPush = isInMissingCellColumn(gesture.location(in: collectionView)) {
+        print("<<<<<<<<<<<<I'm in the missing cell's COL >>>>>>>>")
+        print(indexesToPush)
+        
+//        guard let tileTapped = tileTapped else {
+//          return
+//        }
+//        self.missingTile = tileTapped.row
+//        
+//        collectionView.performBatchUpdates({
+//          for index in indexesToPush.0 {
+//            if indexesToPush.1 {
+//              collectionView.moveItem(at: index, to: IndexPath(row: index.row - Configs.numberOfTilesOnEdge, section: 0))
+//            } else {
+//              collectionView.moveItem(at: index, to: IndexPath(row: index.row + Configs.numberOfTilesOnEdge, section: 0))
+//            }
+//          }
+//        }, completion: {(finished) in
+//          for index in indexesToPush.0 {
+//            if indexesToPush.1 {
+//              collectionView.dataSource?.collectionView!(collectionView, moveItemAt: index, to: IndexPath(row: index.row - Configs.numberOfTilesOnEdge, section: 0))
+//            } else {
+//              collectionView.dataSource?.collectionView!(collectionView, moveItemAt: index, to: IndexPath(row: index.row + Configs.numberOfTilesOnEdge, section: 0))
+//            }
+//          }
+//          self.checkIfWon()
+//        })
       }
     default:
       collectionView.cancelInteractiveMovement()
@@ -268,6 +334,65 @@ extension PuzzleViewController {
     }
     
     return nil
+  }
+  
+  func isInMissingCellRow(_ targetPosition: CGPoint) -> ([IndexPath], Bool)? {
+    
+    var indexPathsToPush: [IndexPath] = []
+    var left = false
+    
+    guard let missingCell = missingCell,
+      let emptySlotIndexPath = collectionView?.indexPath(for: missingCell),
+      let targetIndexPath = collectionView?.indexPathForItem(at: targetPosition) else {
+        return nil
+    }
+    
+    if (emptySlotIndexPath.row / Configs.numberOfTilesOnEdge == targetIndexPath.row / Configs.numberOfTilesOnEdge) && targetIndexPath.row != emptySlotIndexPath.row {
+      var index = targetIndexPath.row
+      if index < emptySlotIndexPath.row {
+        while index < emptySlotIndexPath.row {
+          indexPathsToPush.append(IndexPath(row: index, section: 0))
+          index += 1
+        }
+      } else if index > emptySlotIndexPath.row {
+        while index > emptySlotIndexPath.row {
+          indexPathsToPush.append(IndexPath(row: index, section: 0))
+          index -= 1
+        }
+        left = true
+      }
+    }
+    return indexPathsToPush.count == 0 ? nil : (indexPathsToPush, left)
+  }
+  
+  func isInMissingCellColumn(_ targetPosition: CGPoint) -> ([IndexPath], Bool)? {
+
+    var indexPathsToPush: [IndexPath] = []
+    var top = false
+
+    guard let missingCell = missingCell,
+      let emptySlotIndexPath = collectionView?.indexPath(for: missingCell),
+      let targetIndexPath = collectionView?.indexPathForItem(at: targetPosition) else {
+        return nil
+    }
+    
+    if (emptySlotIndexPath.row % Configs.numberOfTilesOnEdge == targetIndexPath.row % Configs.numberOfTilesOnEdge) && targetIndexPath.row != emptySlotIndexPath.row {
+      var index = targetIndexPath.row
+      if index < emptySlotIndexPath.row {
+        while index < emptySlotIndexPath.row {
+          indexPathsToPush.append(IndexPath(row: index, section: 0))
+          index += Configs.numberOfTilesOnEdge
+        }
+      } else if index > emptySlotIndexPath.row {
+        while index > emptySlotIndexPath.row {
+          indexPathsToPush.append(IndexPath(row: index, section: 0))
+          index -= Configs.numberOfTilesOnEdge
+        }
+        top = true
+      }
+    }
+    
+    return indexPathsToPush.count == 0 ? nil : (indexPathsToPush, top)
   }
 }
 
