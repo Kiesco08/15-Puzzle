@@ -56,6 +56,12 @@ class PuzzleViewController: UICollectionViewController {
     if (!isSolvable(emptyY: Int(missingTile / Configs.numberOfTilesOnEdge) + 1)) {
       initPuzzle()
     }
+    
+    if isSolvable(emptyY: Int(missingTile / Configs.numberOfTilesOnEdge) + 1) {
+      print("<<<<PUZZLE IS SOLVABLE>>>>")
+    } else {
+      print("<<<<UNSOLVABLE PUZZLE>>>>")
+    }
   }
   
   // MARK: Tile Suffling
