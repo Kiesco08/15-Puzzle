@@ -11,6 +11,9 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "PuzzleViewController.initPuzzle() -&gt; ():PuzzleViewController.swift">
+      </ContextState>
+      <ContextState
          contextName = "PuzzleViewController.collectionView(UICollectionView, cellForItemAt : IndexPath) -&gt; UICollectionViewCell:PuzzleViewController.swift">
          <PersistentStrings>
             <PersistentString
@@ -27,7 +30,12 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "PuzzleViewController.viewDidLoad() -&gt; ():PuzzleViewController.swift">
+         contextName = "PuzzleViewController.swapTiles(i : Int, j : Int, k : Int, l : Int, printIt : Bool) -&gt; ():PuzzleViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "sumInversions()">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "PuzzleViewController.isSolvable(emptyRow : Int) -&gt; Bool:PuzzleViewController.swift">
@@ -36,6 +44,9 @@
                value = "sumInversions()">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "PuzzleViewController.viewDidLoad() -&gt; ():PuzzleViewController.swift">
       </ContextState>
       <ContextState
          contextName = "PuzzleViewController.collectionView(UICollectionView, layout : UICollectionViewLayout, sizeForItemAt : IndexPath) -&gt; CGSize:PuzzleViewController.swift">
@@ -47,14 +58,6 @@
       </ContextState>
       <ContextState
          contextName = "PuzzleViewController.neighbourMissingTile() -&gt; IndexPath?:PuzzleViewController.swift">
-      </ContextState>
-      <ContextState
-         contextName = "PuzzleViewController.swapTiles(i : Int, j : Int, k : Int, l : Int, printIt : Bool) -&gt; ():PuzzleViewController.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "sumInversions()">
-            </PersistentString>
-         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "PuzzleViewController.isInMissingCellRow(CGPoint) -&gt; [IndexPath]?:PuzzleViewController.swift">
@@ -75,6 +78,20 @@
             </PersistentString>
             <PersistentString
                value = "tileTapped.row">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "PuzzleViewController.checkIfWon() -&gt; ():PuzzleViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "i">
+            </PersistentString>
+            <PersistentString
+               value = "splitImages[n].originalX">
+            </PersistentString>
+            <PersistentString
+               value = "splitImages[n].originalX != i">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

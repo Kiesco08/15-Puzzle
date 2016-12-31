@@ -32,6 +32,8 @@ class PuzzleViewController: UICollectionViewController {
     return nil
   }
   
+  var stop = false
+  
   // MARK: Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -52,16 +54,6 @@ class PuzzleViewController: UICollectionViewController {
     collectionView?.reloadData()
     
     makeSurePuzzleIsSolvable()
-    
-    if (!isSolvable(emptyY: Int(missingTile / Configs.numberOfTilesOnEdge) + 1)) {
-      initPuzzle()
-    }
-    
-    if isSolvable(emptyY: Int(missingTile / Configs.numberOfTilesOnEdge) + 1) {
-      print("<<<<PUZZLE IS SOLVABLE>>>>")
-    } else {
-      print("<<<<UNSOLVABLE PUZZLE>>>>")
-    }
   }
   
   // MARK: Tile Suffling
@@ -82,8 +74,8 @@ class PuzzleViewController: UICollectionViewController {
   
   func swapTiles(i: Int, j: Int, k: Int, l: Int) {
     // We are using a flat array to represent the grid represented by the puzzle, so we use n = y * w + x to translate a grid item position to an array item position
-    let arrayPositionToSwap1 = j * Configs.numberOfTilesOnEdge + i
-    let arrayPositionToSwap2 = l * Configs.numberOfTilesOnEdge + k
+    let arrayPositionToSwap1 = j * tileCount + i
+    let arrayPositionToSwap2 = l * tileCount + k
     
     let temp = splitImages[arrayPositionToSwap1]
     splitImages[arrayPositionToSwap1] = splitImages[arrayPositionToSwap2]
@@ -91,23 +83,18 @@ class PuzzleViewController: UICollectionViewController {
   }
   
   func makeSurePuzzleIsSolvable() {
-    let emptyY = Int(missingTile / Configs.numberOfTilesOnEdge)
-    let emptyX = missingTile % Configs.numberOfTilesOnEdge
+    let emptyY = Int(missingTile / tileCount)
     
     if (!isSolvable(emptyY: emptyY + 1)) {
-      if (emptyY == 0 && emptyX <= 1) {
-        swapTiles(i: tileCount - 2, j: tileCount - 1, k: tileCount - 1, l: tileCount - 1)
-      } else {
-        swapTiles(i: 0, j: 0, k: 1, l: 0)
-      }
+      initPuzzle()
     }
   }
   
   func isSolvable(emptyY: Int) -> Bool {
-    if (Configs.numberOfTilesOnEdge % 2 == 1) {
+    if (tileCount % 2 == 1) {
       return (sumInversions() % 2 == 0)
     } else {
-      return ((sumInversions() + Configs.numberOfTilesOnEdge - emptyY) % 2 == 0)
+      return ((sumInversions() + tileCount - emptyY) % 2 == 0)
     }
   }
   
@@ -181,29 +168,29 @@ class PuzzleViewController: UICollectionViewController {
         print("<<<<<<<<<<<<I'm in the missing cell's ROW >>>>>>>>")
         print(indexesToPush)
         
-        guard let tileTapped = tileTapped else {
-          return
-        }
-        self.missingTile = tileTapped.row
-        
-        collectionView.performBatchUpdates({
-          for index in indexesToPush.0 {
-            if indexesToPush.1 {
-              collectionView.moveItem(at: index, to: IndexPath(row: index.row - 1, section: 0))
-            } else {
-              collectionView.moveItem(at: index, to: IndexPath(row: index.row + 1, section: 0))
-            }
-          }
-        }, completion: {(finished) in
-          for index in indexesToPush.0 {
-            if indexesToPush.1 {
-              collectionView.dataSource?.collectionView!(collectionView, moveItemAt: index, to: IndexPath(row: index.row - 1, section: 0))
-            } else {
-              collectionView.dataSource?.collectionView!(collectionView, moveItemAt: index, to: IndexPath(row: index.row + 1, section: 0))
-            }
-          }
-          self.checkIfWon()
-        })
+//        guard let tileTapped = tileTapped else {
+//          return
+//        }
+//        self.missingTile = tileTapped.row
+//        
+//        collectionView.performBatchUpdates({
+//          for index in indexesToPush.0 {
+//            if indexesToPush.1 {
+//              collectionView.moveItem(at: index, to: IndexPath(row: index.row - 1, section: 0))
+//            } else {
+//              collectionView.moveItem(at: index, to: IndexPath(row: index.row + 1, section: 0))
+//            }
+//          }
+//        }, completion: {(finished) in
+//          for index in indexesToPush.0 {
+//            if indexesToPush.1 {
+//              collectionView.dataSource?.collectionView!(collectionView, moveItemAt: index, to: IndexPath(row: index.row - 1, section: 0))
+//            } else {
+//              collectionView.dataSource?.collectionView!(collectionView, moveItemAt: index, to: IndexPath(row: index.row + 1, section: 0))
+//            }
+//          }
+//          self.checkIfWon()
+//        })
       } else if let indexesToPush = isInMissingCellColumn(gesture.location(in: collectionView)) {
         print("<<<<<<<<<<<<I'm in the missing cell's COL >>>>>>>>")
         print(indexesToPush)
@@ -216,17 +203,17 @@ class PuzzleViewController: UICollectionViewController {
 //        collectionView.performBatchUpdates({
 //          for index in indexesToPush.0 {
 //            if indexesToPush.1 {
-//              collectionView.moveItem(at: index, to: IndexPath(row: index.row - Configs.numberOfTilesOnEdge, section: 0))
+//              collectionView.moveItem(at: index, to: IndexPath(row: index.row - tileCount, section: 0))
 //            } else {
-//              collectionView.moveItem(at: index, to: IndexPath(row: index.row + Configs.numberOfTilesOnEdge, section: 0))
+//              collectionView.moveItem(at: index, to: IndexPath(row: index.row + tileCount, section: 0))
 //            }
 //          }
 //        }, completion: {(finished) in
 //          for index in indexesToPush.0 {
 //            if indexesToPush.1 {
-//              collectionView.dataSource?.collectionView!(collectionView, moveItemAt: index, to: IndexPath(row: index.row - Configs.numberOfTilesOnEdge, section: 0))
+//              collectionView.dataSource?.collectionView!(collectionView, moveItemAt: index, to: IndexPath(row: index.row - tileCount, section: 0))
 //            } else {
-//              collectionView.dataSource?.collectionView!(collectionView, moveItemAt: index, to: IndexPath(row: index.row + Configs.numberOfTilesOnEdge, section: 0))
+//              collectionView.dataSource?.collectionView!(collectionView, moveItemAt: index, to: IndexPath(row: index.row + tileCount, section: 0))
 //            }
 //          }
 //          self.checkIfWon()
@@ -279,7 +266,20 @@ class PuzzleViewController: UICollectionViewController {
 extension PuzzleViewController {
   
   func checkIfWon() {
-    if self.sumInversions() == 0 {
+    var solved = true
+    for i in 0 ..< tileCount {
+      for j in 0 ..< tileCount {
+        let n = j * tileCount + i
+        if splitImages[n].originalX != i || splitImages[n].originalY != j {
+          print("original x is \(splitImages[n].originalX) and i is \(i) \(splitImages[n].originalX != i)")
+          print("original y is \(splitImages[n].originalY) and j is \(j) \(splitImages[n].originalY != j)")
+          solved = false
+          break
+        }
+      }
+    }
+    
+    if solved {
       let alert: UIAlertController = UIAlertController(title: NSLocalizedString("Completed", comment: "") , message:NSLocalizedString("You WON!", comment: "") , preferredStyle: .alert)
       let actionButton: UIAlertAction = UIAlertAction(title: NSLocalizedString("Play Again", comment: ""), style: .default) { action -> Void in
       self.initPuzzle()
@@ -298,36 +298,36 @@ extension PuzzleViewController {
     
     var neighbours: [CGPoint] = []
     let n = tileTapped.row
-    let x = n % Configs.numberOfTilesOnEdge
-    let y = n / Configs.numberOfTilesOnEdge
+    let x = n % tileCount
+    let y = n / tileCount
     
-    let missingTileX = missingTile % Configs.numberOfTilesOnEdge
-    let missingTileY = missingTile / Configs.numberOfTilesOnEdge
+    let missingTileX = missingTile % tileCount
+    let missingTileY = missingTile / tileCount
     
     // Top
     let topY = y - 1
-    if topY >= 0 && topY < Configs.numberOfTilesOnEdge {
+    if topY >= 0 && topY < tileCount {
       let topNeighbour = CGPoint(x: x, y: topY)
       neighbours.append(topNeighbour)
     }
     
     // Bottom
     let bottomY = y + 1
-    if bottomY >= 0 && bottomY < Configs.numberOfTilesOnEdge {
+    if bottomY >= 0 && bottomY < tileCount {
       let bottomNeighbour = CGPoint(x: x, y: bottomY)
       neighbours.append(bottomNeighbour)
     }
     
     // Left
     let leftX = x - 1
-    if leftX >= 0 && leftX < Configs.numberOfTilesOnEdge {
+    if leftX >= 0 && leftX < tileCount {
       let leftNeighbour = CGPoint(x: leftX, y: y)
       neighbours.append(leftNeighbour)
     }
     
     // Right
     let rightX = x + 1
-    if rightX >= 0 && rightX < Configs.numberOfTilesOnEdge {
+    if rightX >= 0 && rightX < tileCount {
       let rightNeighbour = CGPoint(x: rightX, y: y)
       neighbours.append(rightNeighbour)
     }
@@ -335,7 +335,7 @@ extension PuzzleViewController {
     for neighbour in neighbours {
       if Int(neighbour.x) == missingTileX && Int(neighbour.y) == missingTileY {
         // We are using a flat array to represent the grid represented by the puzzle, so we use n = y * w + x to translate a grid item position to an array item position
-        return IndexPath(row: Int(neighbour.y) * Configs.numberOfTilesOnEdge + Int(neighbour.x), section: 0)
+        return IndexPath(row: Int(neighbour.y) * tileCount + Int(neighbour.x), section: 0)
       }
     }
     
@@ -353,7 +353,7 @@ extension PuzzleViewController {
         return nil
     }
     
-    if (emptySlotIndexPath.row / Configs.numberOfTilesOnEdge == targetIndexPath.row / Configs.numberOfTilesOnEdge) && targetIndexPath.row != emptySlotIndexPath.row {
+    if (emptySlotIndexPath.row / tileCount == targetIndexPath.row / tileCount) && targetIndexPath.row != emptySlotIndexPath.row {
       var index = targetIndexPath.row
       if index < emptySlotIndexPath.row {
         while index < emptySlotIndexPath.row {
@@ -382,17 +382,17 @@ extension PuzzleViewController {
         return nil
     }
     
-    if (emptySlotIndexPath.row % Configs.numberOfTilesOnEdge == targetIndexPath.row % Configs.numberOfTilesOnEdge) && targetIndexPath.row != emptySlotIndexPath.row {
+    if (emptySlotIndexPath.row % tileCount == targetIndexPath.row % tileCount) && targetIndexPath.row != emptySlotIndexPath.row {
       var index = targetIndexPath.row
       if index < emptySlotIndexPath.row {
         while index < emptySlotIndexPath.row {
           indexPathsToPush.append(IndexPath(row: index, section: 0))
-          index += Configs.numberOfTilesOnEdge
+          index += tileCount
         }
       } else if index > emptySlotIndexPath.row {
         while index > emptySlotIndexPath.row {
           indexPathsToPush.append(IndexPath(row: index, section: 0))
-          index -= Configs.numberOfTilesOnEdge
+          index -= tileCount
         }
         top = true
       }
