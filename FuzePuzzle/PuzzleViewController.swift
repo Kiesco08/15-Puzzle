@@ -25,6 +25,11 @@ class PuzzleViewController: UICollectionViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
+    initPuzzle()
+    prepareGestureRecognizers()
+  }
+  
+  func initPuzzle() {
     guard let image = UIImage(named: "image") else {
       return
     }
@@ -33,8 +38,13 @@ class PuzzleViewController: UICollectionViewController {
     splitImages = image.splitImages
     
     shuffleTiles()
+    collectionView?.reloadData()
+    
     makeSurePuzzleIsSolvable()
-    prepareGestureRecognizers()
+    
+    if (!isSolvable(emptyRow: Int(missingTile / Configs.numberOfTilesOnEdge) + 1)) {
+      initPuzzle()
+    }
   }
   
   // MARK: Tile Suffling
@@ -65,15 +75,14 @@ class PuzzleViewController: UICollectionViewController {
   
   func makeSurePuzzleIsSolvable() {
     let emptyRow = Int(missingTile / Configs.numberOfTilesOnEdge)
-    let emptyColum = missingTile % Configs.numberOfTilesOnEdge
+    let emptyColumn = missingTile % Configs.numberOfTilesOnEdge
     
     if (!isSolvable(emptyRow: emptyRow + 1)) {
-      if (emptyColum == 0 && emptyRow <= 1) {
+      if (emptyRow == 0 && emptyColumn <= 1) {
         swapTiles(i: tileCount - 2, j: tileCount - 1, k: tileCount - 1, l: tileCount - 1)
       } else {
         swapTiles(i: 0, j: 0, k: 1, l: 0)
       }
-      initEmpty()
     }
   }
   
@@ -114,11 +123,6 @@ class PuzzleViewController: UICollectionViewController {
     return inversions
   }
   
-  func initEmpty() {
-    missingTile = Configs.numberOfTiles - 1
-    collectionView?.reloadData()
-  }
-  
   // MARK: Gesture Recognizers
   
   func prepareGestureRecognizers() {
@@ -127,6 +131,7 @@ class PuzzleViewController: UICollectionViewController {
   }
   
   func handleTapGesture(gesture: UITapGestureRecognizer) {
+    
     guard let collectionView = collectionView else {
       return
     }
@@ -146,15 +151,14 @@ class PuzzleViewController: UICollectionViewController {
           return
         }
         self.missingTile = tileTapped.row
-        print("Missing Tile \(neighbourMissingTileIndex.row) is Neighbor")
         collectionView.performBatchUpdates({
           collectionView.moveItem(at: tileTapped, to: neighbourMissingTileIndex)
           collectionView.moveItem(at: neighbourMissingTileIndex, to: tileTapped)
         }, completion: {(finished) in
           collectionView.dataSource?.collectionView!(collectionView, moveItemAt: tileTapped, to: neighbourMissingTileIndex)
+          self.checkIfWon()
         })
       } else {
-        print("I don't see missing tile!")
       }
     default:
       collectionView.cancelInteractiveMovement()
@@ -177,18 +181,17 @@ class PuzzleViewController: UICollectionViewController {
     //      collectionView.updateInteractiveMovementTargetPosition(gesture.location(in: gesture.view!))
     case UIGestureRecognizerState.ended:
       collectionView.endInteractiveMovement()
-      print("Tap")
       if let neighbourMissingTileIndex = neighbourMissingTile() {
         guard let tileTapped = tileTapped else {
           return
         }
         self.missingTile = tileTapped.row
-        print("Missing Tile \(neighbourMissingTileIndex.row) is Neighbor")
         collectionView.performBatchUpdates({
           collectionView.moveItem(at: tileTapped, to: neighbourMissingTileIndex)
           collectionView.moveItem(at: neighbourMissingTileIndex, to: tileTapped)
         }, completion: {(finished) in
           collectionView.dataSource?.collectionView!(collectionView, moveItemAt: tileTapped, to: neighbourMissingTileIndex)
+          self.checkIfWon()
         })
       } else {
         print("I don't see missing tile!")
@@ -199,9 +202,23 @@ class PuzzleViewController: UICollectionViewController {
   }
 }
 
-// MARK: UICollectionViewDataSource
+// MARK: Game Logic
 
 extension PuzzleViewController {
+  
+  func checkIfWon() {
+    if self.sumInversions() == 0 {
+      let alert: UIAlertController = UIAlertController(title: NSLocalizedString("Completed", comment: "") , message:NSLocalizedString("You WON!", comment: "") , preferredStyle: .alert)
+      let actionButton: UIAlertAction = UIAlertAction(title: NSLocalizedString("Play Again", comment: ""), style: .default) { action -> Void in
+      self.initPuzzle()
+      }
+      alert.addAction(actionButton)
+      self.present(alert, animated: true, completion: nil)
+    } else {
+      print("There are \(self.sumInversions()) inversions")
+    }
+  }
+  
   func neighbourMissingTile() -> IndexPath? {
     guard let tileTapped = tileTapped else {
       return nil

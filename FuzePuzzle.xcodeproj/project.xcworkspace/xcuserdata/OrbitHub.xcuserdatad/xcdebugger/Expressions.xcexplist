@@ -3,10 +3,26 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "PuzzleViewController.makeSurePuzzleIsSolvable() -&gt; ():PuzzleViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "sumInversions()">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "PuzzleViewController.handleGesture(gesture : UITapGestureRecognizer) -&gt; ():PuzzleViewController.swift">
          <PersistentStrings>
             <PersistentString
                value = "gesture.state">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "PuzzleViewController.isSolvable(emptyRow : Int) -&gt; Bool:PuzzleViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "sumInversions()">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -23,6 +39,14 @@
          <PersistentStrings>
             <PersistentString
                value = "tileTapped.row">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "PuzzleViewController.swapTiles(i : Int, j : Int, k : Int, l : Int) -&gt; ():PuzzleViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "sumInversions()">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -50,6 +74,14 @@
       </ContextState>
       <ContextState
          contextName = "PuzzleViewController.neighbourMissingTile() -&gt; IndexPath?:PuzzleViewController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "PuzzleViewController.swapTiles(i : Int, j : Int, k : Int, l : Int, printIt : Bool) -&gt; ():PuzzleViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "sumInversions()">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
    </ContextStates>
 </VariablesViewState>
