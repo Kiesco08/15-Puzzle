@@ -18,8 +18,7 @@ class PuzzleViewController: UICollectionViewController {
 
   // MARK: Instance Variables
   var splitImages: [Tile] = []
-  var missingTile = 0
-  var tileTapped: IndexPath?
+  var missingTile = Configs.numberOfTiles - 1
   var missingCell : TileCollectionViewCell? {
     guard let cells = collectionView?.visibleCells as? [TileCollectionViewCell] else {
       return nil
@@ -31,8 +30,6 @@ class PuzzleViewController: UICollectionViewController {
     }
     return nil
   }
-  
-  var stop = false
   
   // MARK: Lifecycle
   override func viewDidLoad() {
@@ -59,61 +56,8 @@ class PuzzleViewController: UICollectionViewController {
   // MARK: Gesture Recognizers
   
   func prepareGestureRecognizers() {
-    let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
-    collectionView?.addGestureRecognizer(tapRecognizer)
-    
-    let gesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
-    collectionView?.addGestureRecognizer(gesture)
-  }
-  
-  func handleTapGesture(gesture: UITapGestureRecognizer) {
-    guard let collectionView = collectionView else {
-      return
-    }
-    
-    switch(gesture.state) {
-    case UIGestureRecognizerState.ended:
-      guard let selectedIndexPath = collectionView.indexPathForItem(at: gesture.location(in: collectionView)) else {
-        break
-      }
-      tileTapped = selectedIndexPath
-      collectionView.beginInteractiveMovementForItem(at: selectedIndexPath)
-      
-      collectionView.endInteractiveMovement()
-
-      if let neighbourMissingTileIndex = neighbourMissingTile() {
-        guard let tileTapped = tileTapped else {
-          return
-        }
-        slideTile(collectionView, tileTapped: tileTapped, missingTile: neighbourMissingTileIndex)
-        
-      } else if let indexesToPush = isInMissingCellRow(gesture.location(in: collectionView)) {
-        for index in indexesToPush.0.reversed() {
-          let tileTapped = index
-          if indexesToPush.1 {
-            let missingTile = IndexPath(row: index.row - 1, section: 0)
-            slideTile(collectionView, tileTapped: tileTapped, missingTile: missingTile)
-          } else {
-            let missingTile = IndexPath(row: index.row + 1, section: 0)
-            slideTile(collectionView, tileTapped: tileTapped, missingTile: missingTile)
-          }
-        }
-
-      } else if let indexesToPush = isInMissingCellColumn(gesture.location(in: collectionView)) {
-        for index in indexesToPush.0.reversed() {
-          let tileTapped = index
-          if indexesToPush.1 {
-            let missingTile = IndexPath(row: index.row - tileCount, section: 0)
-            slideTile(collectionView, tileTapped: tileTapped, missingTile: missingTile)
-          } else {
-            let missingTile = IndexPath(row: index.row + tileCount, section: 0)
-            slideTile(collectionView, tileTapped: tileTapped, missingTile: missingTile)
-          }
-        }
-      }
-    default:
-      collectionView.cancelInteractiveMovement()
-    }
+//    let gesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
+//    collectionView?.addGestureRecognizer(gesture)
   }
   
   // TODO: Implement
@@ -208,16 +152,71 @@ extension PuzzleViewController {
     return inversions
   }
   
-  func slideTile(_ collectionView: UICollectionView, tileTapped: IndexPath, missingTile: IndexPath) {
+  func slideTile(_ collectionView: UICollectionView, tileTapped: IndexPath, missingTile: IndexPath, completion: (()->())? = nil) {
     self.missingTile = tileTapped.row
     
     collectionView.performBatchUpdates({
       collectionView.moveItem(at: tileTapped, to: missingTile)
       collectionView.moveItem(at: missingTile, to: tileTapped)
     }, completion: {(finished) in
-      collectionView.dataSource?.collectionView!(collectionView, moveItemAt: tileTapped, to: missingTile)
+      self.swapTiles(i: tileTapped.row % tileCount, j: tileTapped.row / tileCount, k: missingTile.row % tileCount, l: missingTile.row / tileCount)
       self.checkIfWon()
+      completion?()
     })
+  }
+  
+  func slideListOfTiles(_ collectionView: UICollectionView, tilesToPush: ([IndexPath], Bool), offset: Int, completion: (()->())? = nil) {
+    
+    for (index, indexPath) in tilesToPush.0.reversed().enumerated() {
+      self.missingTile = indexPath.row
+      var destinationIndexPath: IndexPath?
+      
+      if tilesToPush.1 {
+        destinationIndexPath = IndexPath(row: indexPath.row - offset, section: 0)
+      } else {
+        destinationIndexPath = IndexPath(row: indexPath.row + offset, section: 0)
+      }
+      
+      guard let destinationTile = destinationIndexPath else {
+        return
+      }
+      
+      collectionView.performBatchUpdates({
+        collectionView.moveItem(at: indexPath, to: destinationTile)
+        collectionView.moveItem(at: destinationTile, to: indexPath)
+      }, completion: {(finished) in
+        if index == tilesToPush.0.count - 1 {
+          self.swapListOfTiles(tilesToPush, offset: offset)
+          completion?()
+        }
+      })
+    }
+  }
+  
+  func swapListOfTiles(_ tilesToSwap: ([IndexPath], Bool), offset: Int) {
+    
+    for tileToSwap in tilesToSwap.0.reversed() {
+      let tileToSwapArrayIndex = tileToSwap.row
+      let tileToSwapX = Int(tileToSwapArrayIndex % tileCount)
+      let tileToSwapY = Int(tileToSwapArrayIndex / tileCount)
+      
+      var destinationIndexPath: IndexPath?
+      
+      if tilesToSwap.1 {
+        destinationIndexPath = IndexPath(row: tileToSwap.row - offset, section: 0)
+      } else {
+        destinationIndexPath = IndexPath(row: tileToSwap.row + offset, section: 0)
+      }
+      
+      guard let destinationArrayIndex = destinationIndexPath?.row else {
+        return
+      }
+      
+      let destinationX = Int(destinationArrayIndex % tileCount)
+      let destinationY = Int(destinationArrayIndex / tileCount)
+      
+      swapTiles(i: tileToSwapX, j: tileToSwapY, k: destinationX, l: destinationY)
+    }
   }
   
   func checkIfWon() {
@@ -242,11 +241,7 @@ extension PuzzleViewController {
     }
   }
   
-  func neighbourMissingTile() -> IndexPath? {
-    guard let tileTapped = tileTapped else {
-      return nil
-    }
-    
+  func neighbourMissingTile(tileTapped: IndexPath) -> IndexPath? {
     var neighbours: [CGPoint] = []
     let n = tileTapped.row
     let x = n % tileCount
@@ -293,14 +288,13 @@ extension PuzzleViewController {
     return nil
   }
   
-  func isInMissingCellRow(_ targetPosition: CGPoint) -> ([IndexPath], Bool)? {
+  func isInMissingCellRow(_ targetIndexPath: IndexPath) -> ([IndexPath], Bool)? {
     
     var indexPathsToPush: [IndexPath] = []
     var left = false
     
     guard let missingCell = missingCell,
-      let emptySlotIndexPath = collectionView?.indexPath(for: missingCell),
-      let targetIndexPath = collectionView?.indexPathForItem(at: targetPosition) else {
+      let emptySlotIndexPath = collectionView?.indexPath(for: missingCell) else {
         return nil
     }
     
@@ -322,14 +316,13 @@ extension PuzzleViewController {
     return indexPathsToPush.count == 0 ? nil : (indexPathsToPush, left)
   }
   
-  func isInMissingCellColumn(_ targetPosition: CGPoint) -> ([IndexPath], Bool)? {
+  func isInMissingCellColumn(_ targetIndexPath: IndexPath) -> ([IndexPath], Bool)? {
 
     var indexPathsToPush: [IndexPath] = []
     var top = false
 
     guard let missingCell = missingCell,
-      let emptySlotIndexPath = collectionView?.indexPath(for: missingCell),
-      let targetIndexPath = collectionView?.indexPathForItem(at: targetPosition) else {
+      let emptySlotIndexPath = collectionView?.indexPath(for: missingCell) else {
         return nil
     }
     
@@ -384,12 +377,28 @@ extension PuzzleViewController {
 
 extension PuzzleViewController {
   
-  override func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-    let temp = splitImages[sourceIndexPath.row]
-    splitImages[sourceIndexPath.row] = splitImages[destinationIndexPath.row]
-    splitImages[destinationIndexPath.row] = temp
+  override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    
+    if let neighbourMissingTileIndex = neighbourMissingTile(tileTapped: indexPath) {
+      
+      slideTile(collectionView, tileTapped: indexPath, missingTile: neighbourMissingTileIndex)
+      
+    } else if let tilesToPush = isInMissingCellRow(indexPath) {
+      
+      slideListOfTiles(collectionView, tilesToPush: tilesToPush, offset: 1, completion: {
+        print(self.splitImages)
+        self.checkIfWon()
+      })
+      
+    } else if let tilesToPush = isInMissingCellColumn(indexPath) {
+      
+      slideListOfTiles(collectionView, tilesToPush: tilesToPush, offset: tileCount, completion: {
+        print(self.splitImages)
+        self.checkIfWon()
+      })
+      
+    }
   }
-
 }
 
 // MARK: Configure spacing between tiles
