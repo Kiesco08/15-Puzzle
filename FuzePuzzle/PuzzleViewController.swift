@@ -30,6 +30,11 @@ class PuzzleViewController: UICollectionViewController {
     }
     return nil
   }
+  var cellSelectedForPan: TileCollectionViewCell?
+  var indexPathsToDrag: ([IndexPath], Bool)?
+  var dragStartPositionsRelativeToCenter : [CGPoint]?
+  var dragOriginalCenters : [CGPoint]?
+  var distanceDragged: CGFloat = 0
   
   // MARK: Lifecycle
   override func viewDidLoad() {
@@ -56,25 +61,224 @@ class PuzzleViewController: UICollectionViewController {
   // MARK: Gesture Recognizers
   
   func prepareGestureRecognizers() {
-//    let gesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
-//    collectionView?.addGestureRecognizer(gesture)
+    let gesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
+    collectionView?.addGestureRecognizer(gesture)
   }
   
-  // TODO: Implement
   func handlePanGesture(gesture: UIPanGestureRecognizer) {
     guard let collectionView = collectionView else {
       return
     }
     
     switch(gesture.state) {
-    case UIGestureRecognizerState.began: break
-//      collectionView.beginInteractiveMovementForItem(at: selectedIndexPath)
-    case UIGestureRecognizerState.changed: break
-//      collectionView.updateInteractiveMovementTargetPosition(gesture.location(in: gesture.view!))
-    case UIGestureRecognizerState.ended: break
-//      collectionView.endInteractiveMovement()
+    case .began: print("BEGAN")
+      guard let selectedIndexPath = self.collectionView?.indexPathForItem(at: gesture.location(in: self.collectionView)),
+            let cellSelected = collectionView.cellForItem(at: selectedIndexPath) as? TileCollectionViewCell
+        else {
+        break
+      }
+      cellSelectedForPan = cellSelected
+    
+      if let toDrag = isInMissingCellRow(selectedIndexPath) {
+        indexPathsToDrag = toDrag
+      } else if let toDrag = isInMissingCellColumn(selectedIndexPath) {
+        indexPathsToDrag = toDrag
+      }
+      
+      guard let indexPathsToDrag = indexPathsToDrag else {
+        return
+      }
+      dragStartPositionsRelativeToCenter = []
+      dragOriginalCenters = []
+
+      let locationInView = gesture.location(in: collectionView)
+      
+      for indexPathToDrag in indexPathsToDrag.0.reversed() {
+        guard let cell = collectionView.cellForItem(at: indexPathToDrag) else {
+          break
+        }
+        dragStartPositionsRelativeToCenter!.append(CGPoint(x: locationInView.x - cell.center.x, y: locationInView.y - cell.center.y))
+        dragOriginalCenters!.append(cell.center)
+      }
+    case .changed:
+      print("CHANGED")
+      guard let cellSelectedForPan = cellSelectedForPan,
+        let dragStartPositionsRelativeToCenter = dragStartPositionsRelativeToCenter,
+        let indexPath = collectionView.indexPath(for: cellSelectedForPan),
+        let missingCell = missingCell else {
+          break
+      }
+      
+      let locationInView = gesture.location(in: collectionView)
+      
+      if let tilesToPush = isInMissingCellRow(indexPath) {
+        
+        var isBreakingBoundRule = false
+        
+        // Make sure the tiles selected cannot be dragged backwards
+        if tilesToPush.0[0] == indexPath {
+          
+          let potentialCellSelectedCenter = CGPoint(x: locationInView.x - dragStartPositionsRelativeToCenter[dragStartPositionsRelativeToCenter.count - 1].x,
+                                      y: cellSelectedForPan.center.y)
+          
+          let isGoingLeft = tilesToPush.1
+          
+          if (isGoingLeft && potentialCellSelectedCenter.x - cellSelectedForPan.center.x > 0) ||
+            (!isGoingLeft && cellSelectedForPan.center.x - potentialCellSelectedCenter.x > 0) {
+            isBreakingBoundRule = true
+          }
+        }
+        
+        // Make sure the tiles selected do not go beyond the missing tile
+        if tilesToPush.0[0] == indexPath {
+          
+          let potentialCellSelectedCenter = CGPoint(x: locationInView.x - dragStartPositionsRelativeToCenter[0].x,
+                                                    y: cellSelectedForPan.center.y)
+          
+          let isGoingLeft = tilesToPush.1
+          
+          if (isGoingLeft && missingCell.center.x - potentialCellSelectedCenter.x > 0) ||
+            (!isGoingLeft && potentialCellSelectedCenter.x - missingCell.center.x > 0) {
+            isBreakingBoundRule = true
+          }
+        }
+        
+        for (index, indexPath) in tilesToPush.0.reversed().enumerated() {
+          
+          guard let cellToDrag = collectionView.cellForItem(at: indexPath) else {
+            return
+          }
+          
+          let newCellCenter = CGPoint(x: locationInView.x - dragStartPositionsRelativeToCenter[index].x,
+                                      y: cellToDrag.center.y)
+          
+          if !isBreakingBoundRule {
+            UIView.animate(withDuration: 0.1) {
+              cellToDrag.center = newCellCenter
+            }
+          }
+        }
+        
+      } else if let tilesToPush = isInMissingCellColumn(indexPath) {
+        
+        var isBreakingBoundRule = false
+        
+        // Make sure the tiles selected cannot be dragged backwards
+        if tilesToPush.0[0] == indexPath {
+          
+          let potentialCellSelectedCenter = CGPoint(x: cellSelectedForPan.center.x,
+                                                    y: locationInView.y - dragStartPositionsRelativeToCenter[dragStartPositionsRelativeToCenter.count - 1].y)
+          
+          let isGoingUp = tilesToPush.1
+          
+          if (isGoingUp && potentialCellSelectedCenter.y - cellSelectedForPan.center.y > 0) ||
+            (!isGoingUp && cellSelectedForPan.center.y - potentialCellSelectedCenter.y > 0) {
+            isBreakingBoundRule = true
+          }
+        }
+        
+        // Make sure the tiles selected do not go beyond the missing tile
+        if tilesToPush.0[0] == indexPath {
+          
+          let potentialCellSelectedCenter = CGPoint(x: cellSelectedForPan.center.x,
+                                                    y: locationInView.y - dragStartPositionsRelativeToCenter[0].y)
+          
+          let isGoingUp = tilesToPush.1
+          
+          if (isGoingUp && missingCell.center.y - potentialCellSelectedCenter.y > 0) ||
+            (!isGoingUp && potentialCellSelectedCenter.y - missingCell.center.y > 0) {
+            isBreakingBoundRule = true
+          }
+        }
+        
+        for (index, indexPath) in tilesToPush.0.reversed().enumerated() {
+          
+          guard let cellToDrag = collectionView.cellForItem(at: indexPath) else {
+            return
+          }
+          
+          let locationInView = gesture.location(in: collectionView)
+          let newCellCenter = CGPoint(x: cellToDrag.center.x,
+                                      y: locationInView.y - dragStartPositionsRelativeToCenter[index].y)
+          
+          if !isBreakingBoundRule {
+            UIView.animate(withDuration: 0.1) {
+              cellToDrag.center = newCellCenter
+            }
+          }
+        }
+        
+      }
+      
+    case .ended:
+      print("ENDED")
+      
+      guard let cellSelectedForPan = cellSelectedForPan,
+            let indexOfcellSelectedForPan = collectionView.indexPath(for: cellSelectedForPan),
+            let dragOriginalCenters = dragOriginalCenters,
+            let tileImageWidth = cellSelectedForPan.tileImageView.image?.size.width else {
+        return
+      }
+      
+      let minimumDistance: CGFloat = CGFloat(CGFloat(tileImageWidth) / 2) // Minimum distance = half of a tile
+      
+      if let tilesToPush = isInMissingCellRow(indexOfcellSelectedForPan) {
+
+        if let distanceDragged = collectionView.cellForItem(at: tilesToPush.0[tilesToPush.0.count - 1])?.center.distanceToPoint(p: dragOriginalCenters[0]), distanceDragged > minimumDistance {
+
+          slideListOfTiles(collectionView, tilesToPush: tilesToPush, offset: 1, completion: {
+            self.checkIfWon()
+          })
+          
+        } else {
+          
+          for (index, indexPath) in tilesToPush.0.reversed().enumerated() {
+            
+            guard let cellToDrag = collectionView.cellForItem(at: indexPath) else {
+              return
+            }
+            
+            let newCellCenter = CGPoint(x: dragOriginalCenters[index].x,
+                                        y: dragOriginalCenters[index].y)
+            
+            UIView.animate(withDuration: 0.1) {
+              cellToDrag.center = newCellCenter
+            }
+          }
+        }
+        
+      } else if let tilesToPush = isInMissingCellColumn(indexOfcellSelectedForPan) {
+        
+        if let distanceDragged = collectionView.cellForItem(at: tilesToPush.0[tilesToPush.0.count - 1])?.center.distanceToPoint(p: dragOriginalCenters[0]), distanceDragged > minimumDistance {
+          
+          slideListOfTiles(collectionView, tilesToPush: tilesToPush, offset: tileCount, completion: {
+            self.checkIfWon()
+          })
+          
+        } else {
+          
+          for (index, indexPath) in tilesToPush.0.reversed().enumerated() {
+            
+            guard let cellToDrag = collectionView.cellForItem(at: indexPath) else {
+              return
+            }
+            
+            let newCellCenter = CGPoint(x: dragOriginalCenters[index].x,
+                                        y: dragOriginalCenters[index].y)
+            
+            UIView.animate(withDuration: 0.1) {
+              cellToDrag.center = newCellCenter
+            }
+          }
+        }
+        
+      }
+      self.indexPathsToDrag = nil
+      self.dragStartPositionsRelativeToCenter = nil
+      self.dragOriginalCenters = nil
+      self.cellSelectedForPan = nil
+      self.distanceDragged = 0
     default: break
-//      collectionView.cancelInteractiveMovement()
     }
   }
 }
@@ -241,53 +445,6 @@ extension PuzzleViewController {
     }
   }
   
-  func neighbourMissingTile(tileTapped: IndexPath) -> IndexPath? {
-    var neighbours: [CGPoint] = []
-    let n = tileTapped.row
-    let x = n % tileCount
-    let y = n / tileCount
-    
-    let missingTileX = missingTile % tileCount
-    let missingTileY = missingTile / tileCount
-    
-    // Top
-    let topY = y - 1
-    if topY >= 0 && topY < tileCount {
-      let topNeighbour = CGPoint(x: x, y: topY)
-      neighbours.append(topNeighbour)
-    }
-    
-    // Bottom
-    let bottomY = y + 1
-    if bottomY >= 0 && bottomY < tileCount {
-      let bottomNeighbour = CGPoint(x: x, y: bottomY)
-      neighbours.append(bottomNeighbour)
-    }
-    
-    // Left
-    let leftX = x - 1
-    if leftX >= 0 && leftX < tileCount {
-      let leftNeighbour = CGPoint(x: leftX, y: y)
-      neighbours.append(leftNeighbour)
-    }
-    
-    // Right
-    let rightX = x + 1
-    if rightX >= 0 && rightX < tileCount {
-      let rightNeighbour = CGPoint(x: rightX, y: y)
-      neighbours.append(rightNeighbour)
-    }
-    
-    for neighbour in neighbours {
-      if Int(neighbour.x) == missingTileX && Int(neighbour.y) == missingTileY {
-        // We are using a flat array to represent the grid represented by the puzzle, so we use n = y * w + x to translate a grid item position to an array item position
-        return IndexPath(row: Int(neighbour.y) * tileCount + Int(neighbour.x), section: 0)
-      }
-    }
-    
-    return nil
-  }
-  
   func isInMissingCellRow(_ targetIndexPath: IndexPath) -> ([IndexPath], Bool)? {
     
     var indexPathsToPush: [IndexPath] = []
@@ -378,22 +535,16 @@ extension PuzzleViewController {
 extension PuzzleViewController {
   
   override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    
-    if let neighbourMissingTileIndex = neighbourMissingTile(tileTapped: indexPath) {
-      
-      slideTile(collectionView, tileTapped: indexPath, missingTile: neighbourMissingTileIndex)
-      
-    } else if let tilesToPush = isInMissingCellRow(indexPath) {
+
+    if let tilesToPush = isInMissingCellRow(indexPath) {
       
       slideListOfTiles(collectionView, tilesToPush: tilesToPush, offset: 1, completion: {
-        print(self.splitImages)
         self.checkIfWon()
       })
       
     } else if let tilesToPush = isInMissingCellColumn(indexPath) {
       
       slideListOfTiles(collectionView, tilesToPush: tilesToPush, offset: tileCount, completion: {
-        print(self.splitImages)
         self.checkIfWon()
       })
       

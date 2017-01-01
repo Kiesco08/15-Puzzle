@@ -63,10 +63,56 @@
          contextName = "PuzzleViewController.isInMissingCellRow(CGPoint) -&gt; [IndexPath]?:PuzzleViewController.swift">
       </ContextState>
       <ContextState
+         contextName = "UIImage.splitImages.getter:UIImageExtension.swift">
+      </ContextState>
+      <ContextState
+         contextName = "PuzzleViewController.handlePanGesture(gesture : UIPanGestureRecognizer) -&gt; ():PuzzleViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "collectionView.indexPath(for: cellSelectedForPan)">
+            </PersistentString>
+            <PersistentString
+               value = "tilesToPush.0.count">
+            </PersistentString>
+            <PersistentString
+               value = "dragStartPositionRelativeToCenter">
+            </PersistentString>
+            <PersistentString
+               value = "collectionView.cellForItem(at: tilesToPush.0[0])!.center">
+            </PersistentString>
+            <PersistentString
+               value = "minimumDistance">
+            </PersistentString>
+            <PersistentString
+               value = "cellSelectedForPan">
+            </PersistentString>
+            <PersistentString
+               value = "dragOriginalCenters[0]">
+            </PersistentString>
+            <PersistentString
+               value = "cellSelectedForPan.center">
+            </PersistentString>
+            <PersistentString
+               value = "potentialCellSelectedCenter">
+            </PersistentString>
+            <PersistentString
+               value = "tilesToPush.0[0]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "PuzzleViewController.swapTiles(i : Int, j : Int, k : Int, l : Int) -&gt; ():PuzzleViewController.swift">
          <PersistentStrings>
             <PersistentString
                value = "sumInversions()">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "CGPoint.distanceToPoint(p : CGPoint) -&gt; CGFloat:CGPointExtension.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "sqrt(pow((p.x - x), 2) + pow((p.y - y), 2))">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
