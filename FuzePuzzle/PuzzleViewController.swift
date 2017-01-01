@@ -61,10 +61,12 @@ class PuzzleViewController: UICollectionViewController {
   func prepareGestureRecognizers() {
     let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
     collectionView?.addGestureRecognizer(tapRecognizer)
+    
+    let gesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
+    collectionView?.addGestureRecognizer(gesture)
   }
   
   func handleTapGesture(gesture: UITapGestureRecognizer) {
-    
     guard let collectionView = collectionView else {
       return
     }
@@ -114,37 +116,21 @@ class PuzzleViewController: UICollectionViewController {
     }
   }
   
-  func handleLongPressGesture(gesture: UILongPressGestureRecognizer) {
+  // TODO: Implement
+  func handlePanGesture(gesture: UIPanGestureRecognizer) {
     guard let collectionView = collectionView else {
       return
     }
     
     switch(gesture.state) {
-    case UIGestureRecognizerState.began:
-      guard let selectedIndexPath = collectionView.indexPathForItem(at: gesture.location(in: collectionView)) else {
-        break
-      }
-      tileTapped = selectedIndexPath
-      collectionView.beginInteractiveMovementForItem(at: selectedIndexPath)
+    case UIGestureRecognizerState.began: break
+//      collectionView.beginInteractiveMovementForItem(at: selectedIndexPath)
     case UIGestureRecognizerState.changed: break
-    //      collectionView.updateInteractiveMovementTargetPosition(gesture.location(in: gesture.view!))
-    case UIGestureRecognizerState.ended:
-      collectionView.endInteractiveMovement()
-      if let neighbourMissingTileIndex = neighbourMissingTile() {
-        guard let tileTapped = tileTapped else {
-          return
-        }
-        self.missingTile = tileTapped.row
-        collectionView.performBatchUpdates({
-          collectionView.moveItem(at: tileTapped, to: neighbourMissingTileIndex)
-          collectionView.moveItem(at: neighbourMissingTileIndex, to: tileTapped)
-        }, completion: {(finished) in
-          collectionView.dataSource?.collectionView!(collectionView, moveItemAt: tileTapped, to: neighbourMissingTileIndex)
-          self.checkIfWon()
-        })
-      }
-    default:
-      collectionView.cancelInteractiveMovement()
+//      collectionView.updateInteractiveMovementTargetPosition(gesture.location(in: gesture.view!))
+    case UIGestureRecognizerState.ended: break
+//      collectionView.endInteractiveMovement()
+    default: break
+//      collectionView.cancelInteractiveMovement()
     }
   }
 }
