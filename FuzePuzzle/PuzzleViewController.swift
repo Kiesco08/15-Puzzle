@@ -11,7 +11,7 @@ import UIKit
 
 private let reuseIdentifier = "TileCollectionViewCell"
 private let itemsPerRow:CGFloat = sqrt(CGFloat(Double(Configs.numberOfTiles)))
-private let sectionInsets = UIEdgeInsets(top: 25.0, left: 10.0, bottom: 25.0, right: 10.0)
+private let sectionInsets = UIEdgeInsets(top: 50.0, left: 1.0, bottom: 50.0, right: 1.0)
 private let tileCount = Configs.numberOfTilesOnEdge
 
 class PuzzleViewController: UICollectionViewController {
@@ -70,7 +70,7 @@ class PuzzleViewController: UICollectionViewController {
     }
     
     switch(gesture.state) {
-    case .began: print("BEGAN")
+    case .began:
       guard let selectedIndexPath = self.collectionView?.indexPathForItem(at: gesture.location(in: self.collectionView)),
             let cellSelected = collectionView.cellForItem(at: selectedIndexPath) as? TileCollectionViewCell
         else {
@@ -100,7 +100,6 @@ class PuzzleViewController: UICollectionViewController {
         dragOriginalCenters!.append(cell.center)
       }
     case .changed:
-      print("CHANGED")
       guard let cellSelectedForPan = cellSelectedForPan,
         let dragStartPositionsRelativeToCenter = dragStartPositionsRelativeToCenter,
         let dragOriginalCenters = dragOriginalCenters,
@@ -211,8 +210,6 @@ class PuzzleViewController: UICollectionViewController {
       }
       
     case .ended:
-      print("ENDED")
-      
       guard let cellSelectedForPan = cellSelectedForPan,
             let indexOfcellSelectedForPan = collectionView.indexPath(for: cellSelectedForPan),
             let dragOriginalCenters = dragOriginalCenters,
@@ -566,6 +563,10 @@ extension PuzzleViewController : UICollectionViewDelegateFlowLayout {
   
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
     return sectionInsets
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+    return 0
   }
   
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {

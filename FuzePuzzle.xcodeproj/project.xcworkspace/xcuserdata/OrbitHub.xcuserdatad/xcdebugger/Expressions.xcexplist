@@ -52,6 +52,12 @@
          contextName = "PuzzleViewController.collectionView(UICollectionView, layout : UICollectionViewLayout, sizeForItemAt : IndexPath) -&gt; CGSize:PuzzleViewController.swift">
          <PersistentStrings>
             <PersistentString
+               value = "sectionInsets.left">
+            </PersistentString>
+            <PersistentString
+               value = "sectionInsets.right">
+            </PersistentString>
+            <PersistentString
                value = "itemsPerRow">
             </PersistentString>
          </PersistentStrings>
