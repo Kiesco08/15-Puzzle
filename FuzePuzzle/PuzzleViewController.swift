@@ -38,7 +38,6 @@ class PuzzleViewController: UICollectionViewController {
   // MARK: Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
-    title = NSLocalizedString("Fuze Puzzle Test", comment: "")
     initPuzzle()
     prepareGestureRecognizers()
   }

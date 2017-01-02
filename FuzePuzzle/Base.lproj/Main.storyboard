@@ -10,7 +10,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Puzzle View Controller-->
+        <!--Fuze Puzzle-->
         <scene sceneID="guV-du-Xba">
             <objects>
                 <collectionViewController id="lGR-cN-roI" customClass="PuzzleViewController" customModule="FuzePuzzle" customModuleProvider="target" sceneMemberID="viewController">
@@ -56,8 +56,8 @@
                             <outlet property="delegate" destination="lGR-cN-roI" id="08e-gc-7cD"/>
                         </connections>
                     </collectionView>
-                    <navigationItem key="navigationItem" id="dKu-pE-VmJ">
-                        <barButtonItem key="leftBarButtonItem" systemItem="refresh" id="nfZ-ng-o34">
+                    <navigationItem key="navigationItem" title="Fuze Puzzle" id="dKu-pE-VmJ">
+                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="nfZ-ng-o34">
                             <connections>
                                 <action selector="refreshPressed:" destination="lGR-cN-roI" id="jaf-Ue-zBa"/>
                             </connections>
