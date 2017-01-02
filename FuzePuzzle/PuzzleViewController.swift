@@ -112,7 +112,8 @@ class PuzzleViewController: UICollectionViewController {
       
       if let tilesToPush = isInMissingCellRow(indexPath) {
         
-        var isBreakingBoundRule = false
+        var isBreakingUpperBoundRule = false
+        var isBreakingLowerBoundRule = false
         
         // Make sure the tiles selected cannot be dragged backwards
         if tilesToPush.0[0] == indexPath {
@@ -124,7 +125,7 @@ class PuzzleViewController: UICollectionViewController {
           
           if (isGoingLeft && potentialCellSelectedCenter.x - dragOriginalCenters[0].x > 0) ||
             (!isGoingLeft && dragOriginalCenters[0].x - potentialCellSelectedCenter.x > 0) {
-            isBreakingBoundRule = true
+            isBreakingLowerBoundRule = true
           }
         }
         
@@ -138,7 +139,7 @@ class PuzzleViewController: UICollectionViewController {
           
           if (isGoingLeft && missingCell.center.x - potentialCellSelectedCenter.x > 0) ||
             (!isGoingLeft && potentialCellSelectedCenter.x - missingCell.center.x > 0) {
-            isBreakingBoundRule = true
+            isBreakingUpperBoundRule = true
           }
         }
         
@@ -148,10 +149,18 @@ class PuzzleViewController: UICollectionViewController {
             return
           }
           
-          let newCellCenter = CGPoint(x: locationInView.x - dragStartPositionsRelativeToCenter[index].x,
+          var newCellCenter = CGPoint(x: locationInView.x - dragStartPositionsRelativeToCenter[index].x,
                                       y: cellToDrag.center.y)
           
-          if !isBreakingBoundRule {
+          if !isBreakingLowerBoundRule {
+            if isBreakingUpperBoundRule {
+              switch index {
+              case 0:
+                newCellCenter = missingCell.center
+              default:
+                newCellCenter = dragOriginalCenters[index - 1]
+              }
+            }
             UIView.animate(withDuration: 0.1) {
               cellToDrag.center = newCellCenter
             }
@@ -160,7 +169,8 @@ class PuzzleViewController: UICollectionViewController {
         
       } else if let tilesToPush = isInMissingCellColumn(indexPath) {
         
-        var isBreakingBoundRule = false
+        var isBreakingUpperBoundRule = false
+        var isBreakingLowerBoundRule = false
         
         // Make sure the tiles selected cannot be dragged backwards
         if tilesToPush.0[0] == indexPath {
@@ -172,7 +182,7 @@ class PuzzleViewController: UICollectionViewController {
           
           if (isGoingUp && potentialCellSelectedCenter.y - dragOriginalCenters[0].y > 0) ||
             (!isGoingUp && dragOriginalCenters[0].y - potentialCellSelectedCenter.y > 0) {
-            isBreakingBoundRule = true
+            isBreakingLowerBoundRule = true
           }
         }
         
@@ -186,7 +196,7 @@ class PuzzleViewController: UICollectionViewController {
           
           if (isGoingUp && missingCell.center.y - potentialCellSelectedCenter.y > 0) ||
             (!isGoingUp && potentialCellSelectedCenter.y - missingCell.center.y > 0) {
-            isBreakingBoundRule = true
+            isBreakingUpperBoundRule = true
           }
         }
         
@@ -197,10 +207,18 @@ class PuzzleViewController: UICollectionViewController {
           }
           
           let locationInView = gesture.location(in: collectionView)
-          let newCellCenter = CGPoint(x: cellToDrag.center.x,
+          var newCellCenter = CGPoint(x: cellToDrag.center.x,
                                       y: locationInView.y - dragStartPositionsRelativeToCenter[index].y)
           
-          if !isBreakingBoundRule {
+          if !isBreakingLowerBoundRule {
+            if isBreakingUpperBoundRule {
+              switch index {
+              case 0:
+                newCellCenter = missingCell.center
+              default:
+                newCellCenter = dragOriginalCenters[index - 1]
+              }
+            }
             UIView.animate(withDuration: 0.1) {
               cellToDrag.center = newCellCenter
             }
