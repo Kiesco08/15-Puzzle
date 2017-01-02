@@ -152,18 +152,19 @@ class PuzzleViewController: UICollectionViewController {
           var newCellCenter = CGPoint(x: locationInView.x - dragStartPositionsRelativeToCenter[index].x,
                                       y: cellToDrag.center.y)
           
-          if !isBreakingLowerBoundRule {
-            if isBreakingUpperBoundRule {
-              switch index {
-              case 0:
-                newCellCenter = missingCell.center
-              default:
-                newCellCenter = dragOriginalCenters[index - 1]
-              }
+          if isBreakingLowerBoundRule {
+            newCellCenter = dragOriginalCenters[index]
+          }
+          if isBreakingUpperBoundRule {
+            switch index {
+            case 0:
+              newCellCenter = missingCell.center
+            default:
+              newCellCenter = dragOriginalCenters[index - 1]
             }
-            UIView.animate(withDuration: 0.1) {
-              cellToDrag.center = newCellCenter
-            }
+          }
+          UIView.animate(withDuration: 0.1) {
+            cellToDrag.center = newCellCenter
           }
         }
         
@@ -210,18 +211,19 @@ class PuzzleViewController: UICollectionViewController {
           var newCellCenter = CGPoint(x: cellToDrag.center.x,
                                       y: locationInView.y - dragStartPositionsRelativeToCenter[index].y)
           
-          if !isBreakingLowerBoundRule {
-            if isBreakingUpperBoundRule {
-              switch index {
-              case 0:
-                newCellCenter = missingCell.center
-              default:
-                newCellCenter = dragOriginalCenters[index - 1]
-              }
+          if isBreakingLowerBoundRule {
+            newCellCenter = dragOriginalCenters[index]
+          }
+          if isBreakingUpperBoundRule {
+            switch index {
+            case 0:
+              newCellCenter = missingCell.center
+            default:
+              newCellCenter = dragOriginalCenters[index - 1]
             }
-            UIView.animate(withDuration: 0.1) {
-              cellToDrag.center = newCellCenter
-            }
+          }
+          UIView.animate(withDuration: 0.1) {
+            cellToDrag.center = newCellCenter
           }
         }
         
