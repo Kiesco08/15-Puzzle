@@ -34,7 +34,6 @@ class PuzzleViewController: UICollectionViewController {
   var indexPathsToDrag: ([IndexPath], Bool)?
   var dragStartPositionsRelativeToCenter : [CGPoint]?
   var dragOriginalCenters : [CGPoint]?
-  var distanceDragged: CGFloat = 0
   
   // MARK: Lifecycle
   override func viewDidLoad() {
@@ -104,6 +103,7 @@ class PuzzleViewController: UICollectionViewController {
       print("CHANGED")
       guard let cellSelectedForPan = cellSelectedForPan,
         let dragStartPositionsRelativeToCenter = dragStartPositionsRelativeToCenter,
+        let dragOriginalCenters = dragOriginalCenters,
         let indexPath = collectionView.indexPath(for: cellSelectedForPan),
         let missingCell = missingCell else {
           break
@@ -123,8 +123,8 @@ class PuzzleViewController: UICollectionViewController {
           
           let isGoingLeft = tilesToPush.1
           
-          if (isGoingLeft && potentialCellSelectedCenter.x - cellSelectedForPan.center.x > 0) ||
-            (!isGoingLeft && cellSelectedForPan.center.x - potentialCellSelectedCenter.x > 0) {
+          if (isGoingLeft && potentialCellSelectedCenter.x - dragOriginalCenters[0].x > 0) ||
+            (!isGoingLeft && dragOriginalCenters[0].x - potentialCellSelectedCenter.x > 0) {
             isBreakingBoundRule = true
           }
         }
@@ -171,8 +171,8 @@ class PuzzleViewController: UICollectionViewController {
           
           let isGoingUp = tilesToPush.1
           
-          if (isGoingUp && potentialCellSelectedCenter.y - cellSelectedForPan.center.y > 0) ||
-            (!isGoingUp && cellSelectedForPan.center.y - potentialCellSelectedCenter.y > 0) {
+          if (isGoingUp && potentialCellSelectedCenter.y - dragOriginalCenters[0].y > 0) ||
+            (!isGoingUp && dragOriginalCenters[0].y - potentialCellSelectedCenter.y > 0) {
             isBreakingBoundRule = true
           }
         }
@@ -277,7 +277,6 @@ class PuzzleViewController: UICollectionViewController {
       self.dragStartPositionsRelativeToCenter = nil
       self.dragOriginalCenters = nil
       self.cellSelectedForPan = nil
-      self.distanceDragged = 0
     default: break
     }
   }
