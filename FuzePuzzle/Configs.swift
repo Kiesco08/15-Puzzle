@@ -10,6 +10,9 @@
 import Foundation
 
 struct Configs {
-  static let numberOfTiles: Int = 16
-  static let numberOfTilesOnEdge: Int = Int(sqrt(Double(Configs.numberOfTiles)))
+  // Number of tiles per row. Update this value for different difficulty levels
+  static let tilesPerRow = 4
+  
+  // Total tiles in the grid
+  static let totalTiles = tilesPerRow * tilesPerRow
 }

@@ -12,13 +12,13 @@ import UIKit
 // This extension was written with the assumption that the image is SQUARE (i.e.: Aspect ration 1:1)
 extension UIImage {
   
-  var splitImages: [Tile] {
+  var splittedImage: [Tile] {
     var images: [Tile] = []
     
     var y: Double = 0
     var j: Int = 0
-    let edgeLength: Double = Double(size.width) // Equals size.height according to our assumption
-    let edgeUnitLength = Double(size.width) / Double(Configs.numberOfTilesOnEdge) // Edge length of one tile
+    let edgeLength: Double = Double(size.width)
+    let edgeUnitLength = Double(size.width) / Double(Configs.tilesPerRow)
     
     while y < edgeLength {
       var x: Double = 0
