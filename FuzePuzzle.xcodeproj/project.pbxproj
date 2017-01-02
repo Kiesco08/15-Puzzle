@@ -146,9 +146,9 @@
 		1E2C5FC31E14E1D100613E9B /* View */ = {
 			isa = PBXGroup;
 			children = (
-				1E2C5F951E12DF0E00613E9B /* LaunchScreen.storyboard */,
 				1E2C5F901E12DF0E00613E9B /* Main.storyboard */,
 				1E2C5F931E12DF0E00613E9B /* Assets.xcassets */,
+				1E2C5F951E12DF0E00613E9B /* LaunchScreen.storyboard */,
 			);
 			name = View;
 			sourceTree = "<group>";

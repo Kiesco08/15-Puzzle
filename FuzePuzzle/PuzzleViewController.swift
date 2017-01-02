@@ -11,7 +11,7 @@ import UIKit
 
 private let reuseIdentifier = "TileCollectionViewCell"
 private let itemsPerRow:CGFloat = sqrt(CGFloat(Double(Configs.numberOfTiles)))
-private let sectionInsets = UIEdgeInsets(top: 50.0, left: 1.0, bottom: 50.0, right: 1.0)
+private let sectionInsets = UIEdgeInsets(top: 1.0, left: 1.0, bottom: 1.0, right: 1.0)
 private let tileCount = Configs.numberOfTilesOnEdge
 
 class PuzzleViewController: UICollectionViewController {
@@ -38,9 +38,13 @@ class PuzzleViewController: UICollectionViewController {
   // MARK: Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
-    
+    title = NSLocalizedString("Fuze Puzzle Test", comment: "")
     initPuzzle()
     prepareGestureRecognizers()
+  }
+  
+  @IBAction func refreshPressed(_ sender: Any) {
+    initPuzzle()
   }
   
   func initPuzzle() {
