@@ -57,6 +57,11 @@
                         </connections>
                     </collectionView>
                     <navigationItem key="navigationItem" title="Fuze Puzzle" id="dKu-pE-VmJ">
+                        <barButtonItem key="leftBarButtonItem" systemItem="camera" id="Ngq-OB-Jaa">
+                            <connections>
+                                <segue destination="VFF-aw-UYq" kind="presentation" id="2hq-k6-uix"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="nfZ-ng-o34">
                             <connections>
                                 <action selector="refreshPressed:" destination="lGR-cN-roI" id="jaf-Ue-zBa"/>
@@ -67,6 +72,45 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7pR-QG-7IL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1095.2" y="25.637181409295355"/>
+        </scene>
+        <!--Image Preview-->
+        <scene sceneID="THm-4g-bBg">
+            <objects>
+                <viewController title="Image Preview" id="Pkz-ex-pfP" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="1NC-ZV-BQ8"/>
+                        <viewControllerLayoutGuide type="bottom" id="fNc-A2-XtQ"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="6P1-QJ-NMT">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="image" translatesAutoresizingMaskIntoConstraints="NO" id="YVY-iY-vJO">
+                                <rect key="frame" x="1" y="65" width="373" height="373"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="YVY-iY-vJO" secondAttribute="height" multiplier="1:1" id="dWQ-hk-kNa"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="YVY-iY-vJO" firstAttribute="top" secondItem="1NC-ZV-BQ8" secondAttribute="bottom" constant="1" id="BMR-tB-fen"/>
+                            <constraint firstItem="YVY-iY-vJO" firstAttribute="leading" secondItem="6P1-QJ-NMT" secondAttribute="leading" constant="1" id="OoS-WB-wxr"/>
+                            <constraint firstAttribute="trailing" secondItem="YVY-iY-vJO" secondAttribute="trailing" constant="1" id="WVb-2H-bw8"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Image Preview" id="3Ua-1o-o6I">
+                        <barButtonItem key="leftBarButtonItem" systemItem="stop" id="Ogg-qf-UzT">
+                            <connections>
+                                <segue destination="TSA-AH-dVD" kind="unwind" unwindAction="unwindToThisViewControllerWithSegue:" id="j2g-Ru-Sad"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="b6Z-dK-muM" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="TSA-AH-dVD" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="2744.8000000000002" y="25.637181409295355"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="tTo-U5-DoF">
@@ -86,5 +130,26 @@
             </objects>
             <point key="canvasLocation" x="156" y="25.637181409295355"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="g5u-gM-gma">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="VFF-aw-UYq" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="HsT-By-jEo">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Pkz-ex-pfP" kind="relationship" relationship="rootViewController" id="20R-uB-KTL"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7Iu-1Z-g9J" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1887" y="26"/>
+        </scene>
     </scenes>
+    <resources>
+        <image name="image" width="240" height="240"/>
+    </resources>
 </document>

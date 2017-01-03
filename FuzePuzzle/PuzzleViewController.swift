@@ -66,6 +66,10 @@ class PuzzleViewController: UICollectionViewController {
     initPuzzle()
   }
   
+  @IBAction func unwindToThisViewController(segue: UIStoryboardSegue) {
+    
+  }
+  
   // MARK: Gesture Recognizers
   
   func prepareGestureRecognizers() {
