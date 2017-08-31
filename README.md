@@ -1,2 +1,2 @@
 # FuzePuzzle
-A simple 15-Puzzle implemented as a personal project
+An implementation of a 15-Puzzle
